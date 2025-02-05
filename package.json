@@ -1,7 +1,7 @@
 {
   "name": "omni-worker",
   "version": "0.0.1",
-  "description": "Run your code including all imports inside webworkers!",
+  "description": "Run your code including all imports inside workers on either the web or on NodeJS!",
   "main": "dist/index.cjs.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -19,14 +19,25 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/your-package-name.git"
+    "url": "https://github.com/avluent/omni-worker"
   },
-  "keywords": ["worker", "multithreading", "web worker", "worker_threads", "omni", "typescript"],
+  "keywords": [
+    "worker",
+    "multithreading",
+    "web worker",
+    "worker_threads",
+    "omni",
+    "typescript"
+  ],
   "author": "anonaddy",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^5.0.0",
     "jest": "^29.0.0",
-    "ts-jest": "^29.0.0"
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "comlink": "^4.4.2",
+    "esbuild": "^0.24.2"
   }
 }
