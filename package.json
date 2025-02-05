@@ -1,0 +1,32 @@
+{
+  "name": "omni-worker",
+  "version": "0.0.1",
+  "description": "Run your code including all imports inside webworkers!",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepare": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/your-package-name.git"
+  },
+  "keywords": ["worker", "multithreading", "web worker", "worker_threads", "omni", "typescript"],
+  "author": "anonaddy",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  }
+}
