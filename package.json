@@ -1,5 +1,5 @@
 {
-  "name": "omni-worker",
+  "name": "@anonaddy/omni-worker",
   "version": "0.0.2",
   "description": "Run your code including all imports inside workers on either the web or on NodeJS!",
   "main": "dist/index.cjs.js",

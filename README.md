@@ -14,7 +14,7 @@ So how do OmniWorkers stand out from normal workers? First off, the simplicity. 
 
 #### `👷‍♀️ workers/worker.ts`
 ```javascript
-import { NodeOmniWorker } from "omni-worker";
+import { NodeOmniWorker } from "@anonaddy/omni-worker";
 import { IMyOmniWorkerFunctions } from "./worker-model";
 import { capitalize } from "lodash";
 
@@ -33,7 +33,7 @@ What's important, is to expose your logic using the expose function. This will m
 
 #### `🏭 index.ts`
 ```javascript
-import { NodeOmniWorker } from "omni-worker";
+import { NodeOmniWorker } from "@anonaddy/omni-worker";
 import { IMyOmniWorkerFunctions } from "./worker-model";
 
 const WORKER_DIR = "./workers";
