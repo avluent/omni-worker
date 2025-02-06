@@ -36,7 +36,7 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
    */
   public static async build<T extends object>(
     path: string
-  ): Promise<IOmniWorker<T>> {
+  ): Promise<NodeOmniWorker<T>> {
     const api = await buildApiNode<T>(path);
     return new NodeOmniWorker<T>(api);
   }

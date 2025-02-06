@@ -4,7 +4,7 @@ export const nativeModulePlugin: Plugin = {
   name: 'native-module',
   setup(build) {
     build.onResolve({ filter: /\.node$/ }, args => {
-      return { path: args.path, namespace: 'native' };
+      return { path: args.path, namespace: 'native', external: true };
     });
     build.onLoad({ filter: /\.node$/, namespace: 'native' }, async args => {
       const fs = require('fs');

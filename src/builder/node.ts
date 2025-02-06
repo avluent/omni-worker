@@ -14,14 +14,18 @@ export const buildApiNode = async <T>(path: string): Promise<Comlink.Remote<T>> 
 
   const result = await esbuild.build({
     entryPoints: [resolvedPath],
-    loader: { ".ts": "ts" },
+    loader: {
+      ".ts": "ts",
+      ".js": "js",
+      ".node": "binary"
+    },
     format: "cjs",
     bundle: true,
     minify: true,
     write: false,
     plugins: [
+      nativeModulePlugin,
       externalImportsPlugin,
-      nativeModulePlugin
     ]
   });
 

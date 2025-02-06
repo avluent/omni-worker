@@ -37,7 +37,7 @@ import { NodeOmniWorker } from "@anonaddy/omni-worker";
 import { IMyOmniWorkerFunctions } from "./worker-model";
 
 // Use the static path from your project's root
-const WORKER_DIR = "./src/workers";
+const WORKER_DIR = "src/workers";
 
 // Build the worker from the file you specified and the
 // functions that were exposed
@@ -59,12 +59,29 @@ setTimeout(async () => {
 Your code can now just asynchronously call the logic you have declared and exposed inside your worker. Simply call the `worker.use()` function and you'll have access to all the functions defined by you inside your `IMyOwnWorkerFunctions` interface.
 
 ### Under the Hood
-This modules leverages [Comlink](https://github.com/GoogleChromeLabs/comlink) and [Esbuild](https://github.com/evanw/esbuild) to parse your container code, build it and wire it up to the main event loop using Comlink. Many thanks to all maintainers of both these modules.
+This modules leverages [Comlink](https://github.com/GoogleChromeLabs/comlink) and [Esbuild](https://github.com/evanw/esbuild) to parse your container code, build it and wire it up to the main event loop using Comlink.
+
+### Tests
+Tests are included inside this library. If you would like to learn how to build and instantiate your workers, you can find examples inside the test code, for node inside `__tests_node__` and for web `__tests_dom__` respectively.
+
+# Potential Issues
+There's cases where building the worker could lead to errors. Especially when working with packages that use bindings for other languages such as C or C++ for example and that are built to `*.node` binary files using node-gyp. One could experience situations like:
+```
+❌ Module did not self-register: /path/to/node-gyp/built/binary.node
+```
+The root cause is assumed to be a mismatch on either the build or the initialization stage of the binary. Oftentimes, performing these steps, helps:
+``` bash
+# first, retry the rebuild
+npm rebuild <your lib>
+
+# if that didn't work
+rm -rf node_modules
+mv package-lock.json package-lock.json.backup # make sure to make a backup!
+npm i
+```
+Should you run into the issue above, or similar other issues, please drop me an email on the address mentioned at the bottom of this doc.
 
 # Project Status
 Currently, only `NodeOmniWorker`s are available. The `WebOmniWorker`s will also be available soon. Please stay tuned! In case you have any questions, make sure to drop me an [email](mailto:7ebr7fa0@anonaddy.com) and I will try to get back to you asap.
 
-## Tests
-Tests are included inside this library. If you would like to learn how to build and instantiate your workers, you can find examples inside the test code, for node inside `__tests_node__` and for web `__tests_dom__` respectively.
-
-**Happy (Omni)Working!!**
+🏗️ **Happy (Omni)Working!!** 🏗️

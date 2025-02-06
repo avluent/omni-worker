@@ -199,7 +199,7 @@ const config: Config = {
   // Allow Jest to run with ESModules and CommonJS in the dist folder
   transform: {
     "^.+\\.ts$": ["ts-jest", {
-      tsconfig: "tsconfig.cjs.json",  // Path to your tsconfig.json (if needed)
+      tsconfig: "tsconfig.mjs.json",  // Path to your tsconfig.json (if needed)
       // other ts-jest options, like diagnostics, babelConfig, etc.
     }],
   },
