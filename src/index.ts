@@ -1,8 +1,10 @@
-import { buildApiNode } from './builder/node';
 import { IOmniWorker } from './types/omni-worker';
+export { IOmniWorker } from './types/omni-worker';
+
+import { parentPort } from 'worker_threads';
 import * as Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
-import { parentPort } from 'worker_threads';
+import { buildApiNode } from './builder/node';
 
 export class NodeOmniWorker<T> implements IOmniWorker<T> {
   private _api: Comlink.Remote<T>;

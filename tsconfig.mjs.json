@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "dist/mjs",
+    "module": "ESNext",
+    "target": "ES2018",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "declarationDir": "dist"
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": [
+    "node_modules",  // Exclude node_modules
+    "dist"           // Exclude build output folders like dist
+  ]
+}
