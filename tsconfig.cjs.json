@@ -12,9 +12,15 @@
     "lib": ["ESNext"],
     "declarationDir": "dist"
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "__tests_node__/mock/**/*.ts",
+    "__tests_node__/mock/**/*.d.ts"
+  ],
   "exclude": [
     "node_modules",  // Exclude node_modules
     "dist"           // Exclude build output folders like dist
-  ]
+  ],
+  "typeRoots": ["./node_modules/@types", "./**/*.d.ts"]
 }

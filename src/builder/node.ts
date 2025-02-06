@@ -3,10 +3,15 @@ import * as esbuild from 'esbuild';
 import externalImportsPlugin from './plugins/external-imports';
 import { Worker } from 'worker_threads';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
+import * as _path from 'path';
 
 export const buildApiNode = async <T>(path: string): Promise<Comlink.Remote<T>> => {
+
+  const currentWorkingDir = process.cwd();
+  const resolvedPath = _path.resolve(currentWorkingDir, path);
+
   const result = await esbuild.build({
-    entryPoints: [path],
+    entryPoints: [resolvedPath],
     loader: { ".ts": "ts" },
     format: "cjs",
     bundle: true,

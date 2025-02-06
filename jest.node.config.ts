@@ -195,6 +195,25 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+
+  // Allow Jest to run with ESModules and CommonJS in the dist folder
+  transform: {
+    '^.+\\.(js|ts|tsx)$': 'babel-jest', // or ts-jest if you are using TypeScript
+  },
+  moduleFileExtensions: ['js', 'ts', 'tsx', 'json', 'node', 'd.ts'],
+  moduleNameMapper: {
+    '^types/(.*)$': '<rootDir>/src/types/$1',  // Add path alias mappings if necessary
+  },
+  
+  // Make sure Jest can process ESM syntax (import/export) if you're using it
+  extensionsToTreatAsEsm: ['.ts'],
+
+  // Ensure that jest works with ES modules properly
+  globals: {
+    'ts-jest': {
+      useESM: true, // If you're using ts-jest with ESM support
+    },
+  },
 };
 
 export default config;
