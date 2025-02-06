@@ -9,7 +9,7 @@
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "lib": ["ESNext", "WebWorker"]
+    "lib": ["ESNext"]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }
