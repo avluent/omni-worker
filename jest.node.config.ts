@@ -198,22 +198,12 @@ const config: Config = {
 
   // Allow Jest to run with ESModules and CommonJS in the dist folder
   transform: {
-    '^.+\\.(js|ts|tsx)$': 'babel-jest', // or ts-jest if you are using TypeScript
+    "^.+\\.ts$": ["ts-jest", {
+      tsconfig: "tsconfig.cjs.json",  // Path to your tsconfig.json (if needed)
+      // other ts-jest options, like diagnostics, babelConfig, etc.
+    }],
   },
-  moduleFileExtensions: ['js', 'ts', 'tsx', 'json', 'node', 'd.ts'],
-  moduleNameMapper: {
-    '^types/(.*)$': '<rootDir>/src/types/$1',  // Add path alias mappings if necessary
-  },
-  
-  // Make sure Jest can process ESM syntax (import/export) if you're using it
-  extensionsToTreatAsEsm: ['.ts'],
-
-  // Ensure that jest works with ES modules properly
-  globals: {
-    'ts-jest': {
-      useESM: true, // If you're using ts-jest with ESM support
-    },
-  },
+  moduleFileExtensions: ["ts", "js", "json", "node"],
 };
 
 export default config;

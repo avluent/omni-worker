@@ -194,6 +194,13 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+  transform: {
+    "^.+\\.ts$": ["ts-jest", {
+      tsconfig: "tsconfig.cjs.json",  // Path to your tsconfig.json (if needed)
+      // other ts-jest options, like diagnostics, babelConfig, etc.
+    }],
+  },
+  moduleFileExtensions: ["ts", "js", "json", "node"],
 };
 
 export default config;

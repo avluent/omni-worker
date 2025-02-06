@@ -4,22 +4,21 @@
     "module": "ESNext",
     "target": "ES2018",
     "declaration": true,
+    "declarationDir": "dist/types",
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "declarationDir": "dist"
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "__tests_node__/mock/**/*.ts",
-    "__tests_node__/mock/**/*.d.ts"
   ],
   "exclude": [
-    "node_modules",  // Exclude node_modules
-    "dist"           // Exclude build output folders like dist
-  ],
-  "typeRoots": ["./node_modules/@types", "./**/*.d.ts"]
+    "node_modules",
+    "dist",
+    "__tests_node__/mock/**/*.ts",
+    "__tests_node__/mock/**/*.d.ts"
+  ]
 }

@@ -1,4 +1,6 @@
 import { IOmniWorker } from './types/omni-worker';
+export { IOmniWorker } from './types/omni-worker';
+
 import { parentPort } from 'worker_threads';
 import * as Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';

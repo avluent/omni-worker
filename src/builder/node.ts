@@ -4,11 +4,13 @@ import externalImportsPlugin from './plugins/external-imports';
 import { Worker } from 'worker_threads';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import * as _path from 'path';
+import { nativeModulePlugin } from '../builder/plugins/native-module';
+import { getCallerDir } from './helpers';
 
 export const buildApiNode = async <T>(path: string): Promise<Comlink.Remote<T>> => {
 
-  const currentWorkingDir = process.cwd();
-  const resolvedPath = _path.resolve(currentWorkingDir, path);
+  const callerDir = getCallerDir();
+  const resolvedPath = _path.resolve(callerDir, path);
 
   const result = await esbuild.build({
     entryPoints: [resolvedPath],
@@ -17,7 +19,10 @@ export const buildApiNode = async <T>(path: string): Promise<Comlink.Remote<T>> 
     bundle: true,
     minify: true,
     write: false,
-    plugins: [externalImportsPlugin]
+    plugins: [
+      externalImportsPlugin,
+      nativeModulePlugin
+    ]
   });
 
   const outputFiles = result.outputFiles;

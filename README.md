@@ -36,7 +36,8 @@ What's important, is to expose your logic using the expose function. This will m
 import { NodeOmniWorker } from "@anonaddy/omni-worker";
 import { IMyOmniWorkerFunctions } from "./worker-model";
 
-const WORKER_DIR = "./workers";
+// Use the static path from your project's root
+const WORKER_DIR = "./src/workers";
 
 // Build the worker from the file you specified and the
 // functions that were exposed
