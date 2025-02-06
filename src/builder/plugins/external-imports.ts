@@ -40,8 +40,6 @@ const externalImportsPlugin: Plugin = ({
         ...(build.initialOptions.external || []),
         ...Array.from(externalModules),
       ];
-
-      console.log(build.initialOptions);
     });
   },
 });
