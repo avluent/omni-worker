@@ -1,7 +1,6 @@
-import { NodeOmniWorker } from '../src/index';
+import { NodeOmniWorker } from '../src/node/index';
 import { TestImportWorkerModel, TestWorkerModel } from './mock/worker-model';
-
-const MOCK_DIR = './__tests_node__/mock';
+import { MOCK_DIR } from './mock/contstants';
 
 test('Node test: process should be defined', () => {
   expect(process).toBeDefined();

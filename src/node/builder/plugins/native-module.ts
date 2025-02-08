@@ -1,6 +1,6 @@
 import { Plugin } from 'esbuild';
 
-export const nativeModulePlugin: Plugin = {
+const nativeModulePlugin: Plugin = {
   name: 'native-module',
   setup(build) {
     build.onResolve({ filter: /\.node$/ }, args => {

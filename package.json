@@ -1,6 +1,6 @@
 {
   "name": "@anonaddy/omni-worker",
-  "version": "0.0.1",
+  "version": "0.0.2-rc1",
   "description": "Run your code including all imports inside workers on either the web or on NodeJS!",
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",
@@ -36,15 +36,19 @@
   "author": "anonaddy",
   "license": "MIT",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.15",
+    "bcrypt": "^5.1.1",
     "jest": "^29.0.0",
     "jest-environment-jsdom": "^29.7.0",
     "lodash": "^4.17.21",
+    "sqlite3": "^5.1.7",
     "ts-jest": "^29.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@babel/parser": "^7.26.8",
     "comlink": "^4.4.2",
     "esbuild": "^0.24.2"
   }
