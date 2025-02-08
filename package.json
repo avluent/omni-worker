@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.26.8",
+    "@babel/types": "^7.26.8",
     "comlink": "^4.4.2",
     "esbuild": "^0.24.2"
   }

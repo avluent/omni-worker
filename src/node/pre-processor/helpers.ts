@@ -1,10 +1,14 @@
 import { parse } from "@babel/parser";
-import { IBinaryCheckedImportRequire, IBinaryMatch, IImportRequire } from "./model";
+import * as t from '@babel/types';
+import { IBinaryCheckedImportRequire, IBinaryMatch, IImportRequire, TechType } from "./model";
 import path from "path";
 import { readdirSync, statSync } from "fs";
 
+const getImportsFromCode = (code: string): string => 
+  (code.match(/(import .*|require.*)/g) || []).join('\n');
+
 export const parseImportRequire = (code: string) => {
-  const importsOnly = (code.match(/(import .*|require.*)/g) || []).join('\n');
+  const importsOnly = getImportsFromCode(code);
 
   try {
     const ast = parse(importsOnly, { sourceType: 'unambiguous', });
@@ -12,7 +16,23 @@ export const parseImportRequire = (code: string) => {
     ast.program.body.forEach((node) => {
       // imports
       if (node.type === 'ImportDeclaration') {
-        imports.push({ type: 'import', from: node.source.value });
+        imports.push({
+          type: 'import',
+          names: node.specifiers
+            .map(s => {
+              if (t.isImportSpecifier(s)) {
+                if (t.isIdentifier(s.imported)) {
+                  return s.imported.name;
+                }
+                if (t.isStringLiteral(s.imported)) {
+                  return s.imported.value;
+                } 
+              }
+              return undefined;
+            })
+            .filter(n => n !== undefined),
+          from: node.source.value
+        });
       }
       
       // requires
@@ -21,7 +41,7 @@ export const parseImportRequire = (code: string) => {
         if (callExpression.callee.type === 'Identifier' && callExpression.callee.name === 'require') {
           const firstArgument = callExpression.arguments[0];
           if (firstArgument && firstArgument.type === 'StringLiteral') {
-            imports.push({ type: 'require', from: firstArgument.value });
+            imports.push({ type: 'require', names: [], from: firstArgument.value });
           }
         }
       }
@@ -47,6 +67,7 @@ export const checkForNodeBinaryDependency = (
   for (const imp of imports) {
     const {
       from,
+      names,
       type
     } = imp;
     try {
@@ -57,6 +78,7 @@ export const checkForNodeBinaryDependency = (
         result.push({
           from,
           type,
+          names,
           dependsOnBinary: match.binaryPath.endsWith('.node'),
           isBinary: imp.from.endsWith('.node'),
           binaryPath: match.binaryPath
@@ -103,4 +125,40 @@ export const scanForBinaryMatches = (
     results.push(...matches);
   }
   return results;
+}
+
+export const handleBinaryDependencies = (
+  code: string,
+  deps: IBinaryCheckedImportRequire[],
+  techType: TechType
+): string => {
+
+  const lines = code.split('\n');
+  const depTargets = deps.map(d => d.from);
+  
+  const resultLines: string[] = [];
+  for (const line of lines) {
+
+    if (line.includes('import') || line.includes('require')) {
+      var idx = -1;
+      if (depTargets.some(dt => {
+        const isIncluded = line.includes(dt);
+        if (isIncluded) {
+          idx = depTargets.indexOf(dt);
+          return isIncluded;
+        }
+        return false;
+      })) {
+        const dep = deps[idx];
+        const { from, binaryPath } = dep;
+        const cast = ` as typeof import('${from}')` 
+        const depLine = `const ${from} = require('${binaryPath}')${techType === 'ts' ? cast : ''};`
+        resultLines.push(depLine);
+        continue;
+      }
+    }
+    resultLines.push(line);
+  }
+
+  return resultLines.join('\n');
 }

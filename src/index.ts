@@ -1,5 +1,4 @@
 export {
-  IOmniWorker,
   INodeOnmiWorkerBuildOptions,
   IWorkerFilePreProcessorOptions
 } from './types/index.d';
