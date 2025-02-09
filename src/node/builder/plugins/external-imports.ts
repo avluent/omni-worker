@@ -36,10 +36,12 @@ const externalImportsPlugin: Plugin = ({
     });
 
     build.onEnd(() => {
+      const arr = Array.from(externalModules);
       build.initialOptions.external = [
         ...(build.initialOptions.external || []),
-        ...Array.from(externalModules),
+        ...arr,
       ];
+      console.log('external', arr);
     });
   },
 });

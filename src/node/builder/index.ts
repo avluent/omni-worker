@@ -5,14 +5,14 @@ import { Worker } from 'worker_threads';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import * as _path from 'path';
 import { getCallerDir } from './helpers';
-import { INodeOnmiWorkerBuildOptions } from '../../types';
+import { INodeOmniWorkerBuildOptions } from '../../types';
 import { binaryPreProcessorPlugin } from './plugins/binary-pre-processor';
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
 import { nativeModulesPlugin } from './plugins/native-modules';
 
 export const buildApiNode = async <T>(
   path: string,
-  options: INodeOnmiWorkerBuildOptions
+  options: INodeOmniWorkerBuildOptions
 ): Promise<Comlink.Remote<T>> => {
 
   const callerDir = getCallerDir();
