@@ -4,6 +4,7 @@ import { IImportRequire, TechType } from './model';
 import { checkForNodeBinaryDependency, handleBinaryDependencies, parseImportRequire } from './helpers';
 
 export class WorkerFilePreProcessor {
+  private _filePath: string;
   private _inputCode: string;
   private _outputCode: string;
   private _techType: TechType;
@@ -13,6 +14,7 @@ export class WorkerFilePreProcessor {
     filePath: string,
     options: IWorkerFilePreProcessorOptions = {}
   ) {
+    this._filePath = filePath;
     this._options = options;
     this._techType = filePath.endsWith('js') ? 'js': 'ts';
     try {
@@ -39,6 +41,9 @@ export class WorkerFilePreProcessor {
     const importRequire = this.getImportRequireStatements();
     const deps = this.checkForNodeBinaryDependency(importRequire);
     const result = handleBinaryDependencies(this._inputCode, deps, this._techType);
+    if (this._filePath.includes(".worker")) {
+      console.log(result);
+    }
     this._outputCode = result;
     return result;
   }

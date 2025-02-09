@@ -2,6 +2,8 @@ import { scanForBinaryMatches } from '../src/node/pre-processor/helpers';
 import { IBinaryMatch } from '../src/node/pre-processor/model';
 import { WorkerFilePreProcessor } from '../src/node/pre-processor/index'
 import { MOCK_DIR } from './mock/contstants';
+import { NodeOmniWorker } from '../src';
+import { TestBinaryImportWorkerModel } from './mock/worker-model';
 
 const moduleDir = './node_modules';
 const packages = ['bcrypt', 'sqlite3'];
@@ -53,4 +55,13 @@ test('binary dependency pre-processing also works on .js', () => {
   const resultCode = processor.processBinaryDependencies();
   // console.log('.js code:\n', resultCode);
   expect(resultCode).toBeDefined();
-})
+});
+
+test('calling a function that depends on a binary', async () => {
+  const worker = await NodeOmniWorker
+    .build<TestBinaryImportWorkerModel>(`${MOCK_DIR}/binary.worker`);
+
+  console.log(worker);
+  const isInitialized = worker.isInitialized();
+  expect(isInitialized).toBeTruthy();
+});

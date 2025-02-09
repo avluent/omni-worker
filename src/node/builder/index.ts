@@ -7,6 +7,8 @@ import * as _path from 'path';
 import { getCallerDir } from './helpers';
 import { INodeOnmiWorkerBuildOptions } from '../../types';
 import { binaryPreProcessorPlugin } from './plugins/binary-pre-processor';
+import { nodeExternalsPlugin } from 'esbuild-node-externals'
+import { nativeModulesPlugin } from './plugins/native-modules';
 
 export const buildApiNode = async <T>(
   path: string,
@@ -20,15 +22,17 @@ export const buildApiNode = async <T>(
     entryPoints: [fullFilePath],
     loader: {
       ".ts": "ts",
-      ".js": "js"
+      ".js": "js",
     },
     format: "cjs",
     bundle: true,
-    minify: true,
+    minify: false,
     write: false,
     plugins: [
+      nodeExternalsPlugin(),
       externalImportsPlugin,
-      binaryPreProcessorPlugin
+      binaryPreProcessorPlugin,
+      nativeModulesPlugin
     ]
   });
 
@@ -44,6 +48,7 @@ export const buildApiNode = async <T>(
   }
 
   const scriptData = result.outputFiles[0].text.trim();
+  // const worker = new Worker(scriptData, { eval: true });
   const worker = new Worker(scriptData, { eval: true });
   const api = Comlink.wrap<T>(nodeEndpoint(worker));
 
