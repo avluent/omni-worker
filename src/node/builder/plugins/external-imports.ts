@@ -12,7 +12,7 @@ const externalImportsPlugin: Plugin = ({
       const code = fs.readFileSync(args.path, "utf8");
 
       // Collect imported module names
-      const importPattern = /import\s+(?:[\s\w{},*]+from\s+)?["']([^"']+)["']/g;;
+      const importPattern = /import\s+(?:[\s\w{},*]+from\s+)?["']([^"']+)["']/g;
       let match;
       while ((match = importPattern.exec(code)) !== null) {
         let importPath = match[1];

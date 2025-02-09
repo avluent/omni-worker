@@ -6,6 +6,7 @@ import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import * as _path from 'path';
 import { getCallerDir } from './helpers';
 import { INodeOnmiWorkerBuildOptions } from '../../types';
+import { binaryPreProcessorPlugin } from './plugins/binary-pre-processor';
 
 export const buildApiNode = async <T>(
   path: string,
@@ -26,7 +27,8 @@ export const buildApiNode = async <T>(
     minify: true,
     write: false,
     plugins: [
-      externalImportsPlugin
+      externalImportsPlugin,
+      binaryPreProcessorPlugin
     ]
   });
 

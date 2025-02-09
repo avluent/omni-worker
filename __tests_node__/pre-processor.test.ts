@@ -21,7 +21,7 @@ test('import and required statements are resolved', () => {
   );
 
   const importRequire = processor.getImportRequireStatements();
-  console.log(importRequire);
+  // console.log(importRequire);
   expect(importRequire.length).toBe(4);
 });
 
@@ -41,7 +41,7 @@ test('binary dependency imports are being swapped out by binary requires', () =>
   );
   
   const resultCode = processor.processBinaryDependencies();
-  console.log('.ts code:\n', resultCode);
+  // console.log('.ts code:\n', resultCode);
   expect(resultCode).toBeDefined();
 });
 
@@ -51,6 +51,6 @@ test('binary dependency pre-processing also works on .js', () => {
   );
   
   const resultCode = processor.processBinaryDependencies();
-  console.log('.js code:\n', resultCode);
+  // console.log('.js code:\n', resultCode);
   expect(resultCode).toBeDefined();
 })

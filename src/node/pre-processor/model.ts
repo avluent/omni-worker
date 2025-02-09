@@ -3,7 +3,8 @@ export type TechType = 'js'|'ts';
 
 export interface IImportRequire {
   type: ImportType,
-  names: string[],
+  importedNames: string[],
+  localNames: string[],
   from: string
 }
 
