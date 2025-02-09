@@ -2,7 +2,7 @@ import { parentPort } from 'worker_threads';
 import * as Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import { buildApiNode } from './builder';
-import { IOmniWorker, INodeOnmiWorkerBuildOptions } from '../types';
+import { IOmniWorker, INodeOmniWorkerBuildOptions } from '../types';
 
 /**
  * A NodeOmniWorker is a NodeJS OmniWorker constructor that
@@ -11,11 +11,11 @@ import { IOmniWorker, INodeOnmiWorkerBuildOptions } from '../types';
  */
 export class NodeOmniWorker<T> implements IOmniWorker<T> {
   private _api: Comlink.Remote<T>;
-  private _options: INodeOnmiWorkerBuildOptions;
+  private _options: INodeOmniWorkerBuildOptions;
 
   private constructor(
     api: Comlink.Remote<T>,
-    options: INodeOnmiWorkerBuildOptions
+    options: INodeOmniWorkerBuildOptions
   ) {
     this._api = api;
     this._options = options;
@@ -44,7 +44,7 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
    */
   public static async build<T extends object>(
     path: string,
-    options: INodeOnmiWorkerBuildOptions = {}
+    options: INodeOmniWorkerBuildOptions = {}
   ): Promise<NodeOmniWorker<T>> {
     const api = await buildApiNode<T>(path, options);
     return new NodeOmniWorker<T>(api, options);
