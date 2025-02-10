@@ -4,44 +4,101 @@ import { IImportRequire, TechType } from './model';
 import { checkForNodeBinaryDependency, handleBinaryDependencies, parseImportRequire } from './helpers';
 
 export class WorkerFilePreProcessor {
-  private _filePath: string;
+  private _filePath?: string;
+  private _techType?: TechType;
+
   private _inputCode: string;
   private _outputCode: string;
-  private _techType: TechType;
+
   private _options: IWorkerFilePreProcessorOptions;
 
-  constructor(
+  private constructor(
+    code: string,
+    options: IWorkerFilePreProcessorOptions = {},
+    filePath?: string,
+    techType?: TechType
+  ) {
+    this._inputCode = code;
+    this._outputCode = code;
+    this._options = options;
+    this._filePath = filePath;
+    this._techType = techType || filePath?.endsWith('js') ? 'js': 'ts';
+  }
+
+  /**
+   * 
+   * @param filePath Path to the source file
+   * @param options Configuration options
+   * @returns A new WorkerFilePreProcessor
+   */
+  static fromFile(
     filePath: string,
     options: IWorkerFilePreProcessorOptions = {}
-  ) {
-    this._filePath = filePath;
-    this._options = options;
-    this._techType = filePath.endsWith('js') ? 'js': 'ts';
+  ): WorkerFilePreProcessor {
     try {
       const fileContents = readFileSync(filePath, {
         encoding: 'utf-8',
       });
-      this._inputCode = fileContents;
-      this._outputCode = fileContents;
+      return new WorkerFilePreProcessor(
+        fileContents,
+        options,
+        filePath
+      );
     } catch(e) {
       throw new Error("could not load worker file");
     }
-    return this;
   }
 
-  checkForNodeBinaryDependency = checkForNodeBinaryDependency;
+  /**
+   * Instantiate from a code string
+   * @param code TS or JS code as a string
+   * @param options Configuration options
+   * @param techType TS or JS
+   * @returns A new WorkerFilePreProcessor
+   */
+  static fromCode(
+    code: string,
+    options: IWorkerFilePreProcessorOptions = {},
+    techType: TechType
+  ): WorkerFilePreProcessor {
+    return new WorkerFilePreProcessor(
+      code,
+      options,
+      undefined,
+      techType
+    );
+  }
 
+  /**
+   * See whether the file has dependencies on any .node binaries
+   */
+  getNodeBinaryDependency = checkForNodeBinaryDependency;
+
+  /**
+   * Retrieve import and require statements from the code
+   * @returns Import and require statements from the code as an ImportRequire
+   * array
+   */
   getImportRequireStatements(): IImportRequire[] {
     return parseImportRequire(this._inputCode);
   }
 
+  /**
+   * Which tech was used, TypeScript of JavaScript
+   * @returns 'ts' or 'js'
+   */
   getTechType = () => this._techType;
 
+  /**
+   * This will replace regular import statements with requires on binary
+   * dependencies.
+   * @returns Processed output code
+   */
   processBinaryDependencies(): string {
     const importRequire = this.getImportRequireStatements();
-    const deps = this.checkForNodeBinaryDependency(importRequire);
-    const result = handleBinaryDependencies(this._inputCode, deps, this._techType);
-    if (this._filePath.includes(".worker")) {
+    const deps = this.getNodeBinaryDependency(importRequire);
+    const result = handleBinaryDependencies(this._inputCode, deps, this._techType || 'js');
+    if (this._filePath?.includes(".worker")) {
       console.log(result);
     }
     this._outputCode = result;

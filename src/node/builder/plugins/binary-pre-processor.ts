@@ -7,7 +7,7 @@ export const binaryPreProcessorPlugin: Plugin = {
     build.onLoad({ filter: /\.(ts|js)$/ }, async (args) => {
 
       // replace binary deps
-      const processor = new WorkerFilePreProcessor(args.path);
+      const processor = WorkerFilePreProcessor.fromFile(args.path);
       let modifiedSource = processor.processBinaryDependencies();
 
       // define loader type

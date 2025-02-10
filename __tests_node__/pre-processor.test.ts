@@ -18,9 +18,8 @@ test('all binaries are returned', async () => {
 });
 
 test('import and required statements are resolved', () => {
-  const processor = new WorkerFilePreProcessor(
-    `${MOCK_DIR}/binary.worker.ts`
-  );
+  const processor = WorkerFilePreProcessor
+    .fromFile(`${MOCK_DIR}/binary.worker.ts`);
 
   const importRequire = processor.getImportRequireStatements();
   // console.log(importRequire);
@@ -28,19 +27,17 @@ test('import and required statements are resolved', () => {
 });
 
 test('binary dependencies are being picked up on', () => {
-  const processor = new WorkerFilePreProcessor(
-    `${MOCK_DIR}/binary.worker.ts`
-  );
+  const processor = WorkerFilePreProcessor
+    .fromFile(`${MOCK_DIR}/binary.worker.ts`);
 
   const importRequire = processor.getImportRequireStatements();
-  const binaryDependencies = processor.checkForNodeBinaryDependency(importRequire);
+  const binaryDependencies = processor.getNodeBinaryDependency(importRequire);
   expect(binaryDependencies.length).toBe(2);
 });
 
 test('binary dependency imports are being swapped out by binary requires', () => {
-  const processor = new WorkerFilePreProcessor(
-    `${MOCK_DIR}/binary.worker.ts`
-  );
+  const processor = WorkerFilePreProcessor
+    .fromFile(`${MOCK_DIR}/binary.worker.ts`);
   
   const resultCode = processor.processBinaryDependencies();
   // console.log('.ts code:\n', resultCode);
@@ -48,9 +45,8 @@ test('binary dependency imports are being swapped out by binary requires', () =>
 });
 
 test('binary dependency pre-processing also works on .js', () => {
-  const processor = new WorkerFilePreProcessor(
-    `${MOCK_DIR}/binary.worker.js`
-  );
+  const processor = WorkerFilePreProcessor
+    .fromFile(`${MOCK_DIR}/binary.worker.js`);
   
   const resultCode = processor.processBinaryDependencies();
   // console.log('.js code:\n', resultCode);
