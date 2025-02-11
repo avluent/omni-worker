@@ -24,7 +24,7 @@ test('import and required statements are resolved', () => {
 
   const importRequire = processor.getImportRequireStatements();
   // console.log(importRequire);
-  expect(importRequire.length).toBe(5);
+  expect(importRequire.length).toBe(6);
 });
 
 test('binary dependencies are being picked up on', () => {
@@ -65,6 +65,9 @@ test('calling a function that depends on a binary', async () => {
   const isInitialized = worker.isInitialized();
   expect(isInitialized).toBeTruthy();
 
-  const julDay = worker.use().getJulianDay(2022, 12, 14, 12, swisseph.SE_GREG_CAL);
+  const julDay = await worker.use().getJulianDay(2022, 12, 14, 12, swisseph.SE_GREG_CAL);
+  const msg = await worker.use().getWorkerData();
+  // const julDay = await worker.use().getJulianDay();
+  console.log("julian day:", julDay, 'msg', msg);
   expect(julDay).toBeDefined();
 });
