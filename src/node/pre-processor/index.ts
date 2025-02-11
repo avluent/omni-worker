@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { ICodePreProcessorOptions } from '../../types';
 import { IImportRequire, TechType } from './model';
-import { checkForNodeBinaryDependency, handleBinaryDependencies, parseImportRequire } from './helpers';
+import { checkForNodeBinaryDependency, handleBinaryDependencies, parseImportRequire, scanForBinaryMatches } from './helpers';
 
 export class CodePreProcessor {
   private _filePath?: string;
@@ -85,6 +85,11 @@ export class CodePreProcessor {
    * See whether the file has dependencies on any .node binaries
    */
   getNodeBinaryDependencies = checkForNodeBinaryDependency;
+
+  /**
+   * This function will help find and .node files modules folder(s)
+   */
+  static scanForBinaryMatches = scanForBinaryMatches
 
   /**
    * Retrieve import and require statements from the code

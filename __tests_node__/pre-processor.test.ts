@@ -4,6 +4,7 @@ import { CodePreProcessor } from '../src/node/pre-processor/index'
 import { MOCK_DIR } from './mock/contstants';
 import { NodeOmniWorker } from '../src';
 import { TestBinaryImportWorkerModel } from './mock/worker-model';
+import swisseph from 'swisseph';
 
 const moduleDir = './node_modules';
 const packages = ['bcrypt', 'sqlite3'];
@@ -11,7 +12,7 @@ const packages = ['bcrypt', 'sqlite3'];
 test('all binaries are returned', async () => {
   const binaryMatches: IBinaryMatch[][] = [];
   for (const pckg of packages) {
-    const matches = scanForBinaryMatches(pckg, [moduleDir]);
+    const matches = scanForBinaryMatches(pckg);
     binaryMatches.push(matches);
   }
   expect(binaryMatches.flat().length).toBe(2);
@@ -23,7 +24,7 @@ test('import and required statements are resolved', () => {
 
   const importRequire = processor.getImportRequireStatements();
   // console.log(importRequire);
-  expect(importRequire.length).toBe(4);
+  expect(importRequire.length).toBe(5);
 });
 
 test('binary dependencies are being picked up on', () => {
@@ -63,4 +64,7 @@ test('calling a function that depends on a binary', async () => {
   console.log(worker);
   const isInitialized = worker.isInitialized();
   expect(isInitialized).toBeTruthy();
+
+  const julDay = worker.use().getJulianDay(2022, 12, 14, 12, swisseph.SE_GREG_CAL);
+  expect(julDay).toBeDefined();
 });

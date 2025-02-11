@@ -92,11 +92,6 @@ export const checkForNodeBinaryDependency = (
   imports: IImportRequire[]
 ): IBinaryCheckedImportRequire[] => {
 
-  const nodePath = process.env.NODE_PATH;
-  const defaultNodeModulesPath = path.resolve('./node_modules');
-  const searchPaths = [defaultNodeModulesPath];
-  if (nodePath) searchPaths.push(nodePath);
-
   const result: IBinaryCheckedImportRequire[] = [];
   for (const imp of imports) {
     const {
@@ -106,7 +101,7 @@ export const checkForNodeBinaryDependency = (
       type
     } = imp;
     try {
-      const matches = scanForBinaryMatches(imp.from, searchPaths);
+      const matches = scanForBinaryMatches(imp.from);
       const numOfMatches = matches.length;
       if (numOfMatches === 1) {
         const match = matches[0];
@@ -128,9 +123,13 @@ export const checkForNodeBinaryDependency = (
 }
 
 export const scanForBinaryMatches = (
-  packageName: string,
-  modulesPaths: string[]
+  packageName: string
 ): IBinaryMatch[] => {
+
+  const nodePath = process.env.NODE_PATH;
+  const defaultNodeModulesPath = path.resolve('./node_modules');
+  const modulesPaths = [defaultNodeModulesPath];
+  if (nodePath) modulesPaths.push(nodePath);
 
   const results: IBinaryMatch[] = [];
 

@@ -11,6 +11,22 @@ const externalImportsPlugin = (callerDir: string): Plugin => {
       const internalizedModules: Set<string> = new Set();
       const externalModules: Set<string> = new Set();
 
+      build.onResolve({ filter: /.*/ }, (args) => {
+
+        // do binary processing when internalized into bundle
+        if (internalizedModules.has(args.path)) {
+          console.log(
+            'internalized: ', args.path,
+            'matches: ', CodePreProcessor.scanForBinaryMatches(args.path)
+          );
+        }
+      
+        // mark external when should be externalized
+        if (externalModules.has(args.path)) {
+          return { path: args.path, external: true };
+        }
+      });
+
       build.onLoad({ filter: /\.ts$|\.js$/ }, async (args: OnLoadArgs): Promise<any> => {
         const preProcessor = CodePreProcessor.fromFile(args.path);
         const importRequire = preProcessor.getImportRequireStatements();
@@ -43,24 +59,6 @@ const externalImportsPlugin = (callerDir: string): Plugin => {
           }
 
           externalModules.add(importPath);
-        }
-      });
-
-      build.onResolve({ filter: /.*/ }, (args) => {
-
-        // do binary processing when internalized into bundle
-        if (args.path.endsWith('js') || args.path.endsWith('ts')) {
-          if (internalizedModules.has(args.path)) {
-            console.log('internalized: ', args.path)
-            if (args.path.includes('bcrypt')) {
-              console.log('bcrypt', args.path);
-            }
-          }
-        }
-      
-        // mark external when should be externalized
-        if (externalModules.has(args.path)) {
-          return { path: args.path, external: true };
         }
       });
 

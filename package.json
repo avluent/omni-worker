@@ -45,6 +45,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "lodash": "^4.17.21",
     "sqlite3": "^5.1.7",
+    "swisseph": "^0.5.17",
     "ts-jest": "^29.0.0",
     "typescript": "^5.0.0"
   },
