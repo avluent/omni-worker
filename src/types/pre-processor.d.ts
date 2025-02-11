@@ -1,4 +1,4 @@
 /**
  * Options for Workerfile Preprocessor
  */
-export declare interface IWorkerFilePreProcessorOptions {}
+export declare interface ICodePreProcessorOptions {}

@@ -6,7 +6,6 @@ import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import * as _path from 'path';
 import { getCallerDir } from './helpers';
 import { INodeOmniWorkerBuildOptions } from '../../types';
-import { binaryPreProcessorPlugin } from './plugins/binary-pre-processor';
 import { nodeExternalsPlugin } from 'esbuild-node-externals'
 import { nativeModulesPlugin } from './plugins/native-modules';
 
@@ -29,10 +28,9 @@ export const buildApiNode = async <T>(
     minify: false,
     write: false,
     plugins: [
-      nodeExternalsPlugin(),
-      externalImportsPlugin,
-      binaryPreProcessorPlugin,
-      nativeModulesPlugin
+      externalImportsPlugin(callerDir),             // externalize all dependencies
+      nodeExternalsPlugin(),                        // externalize nodejs modules
+      nativeModulesPlugin                           // handle .node files
     ]
   });
 
@@ -48,7 +46,6 @@ export const buildApiNode = async <T>(
   }
 
   const scriptData = result.outputFiles[0].text.trim();
-  // const worker = new Worker(scriptData, { eval: true });
   const worker = new Worker(scriptData, { eval: true });
   const api = Comlink.wrap<T>(nodeEndpoint(worker));
 

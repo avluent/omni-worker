@@ -1,6 +1,6 @@
 export {
   INodeOmniWorkerBuildOptions,
-  IWorkerFilePreProcessorOptions
+  ICodePreProcessorOptions
 } from './types/index.d';
 
 export { NodeOmniWorker } from "./node";

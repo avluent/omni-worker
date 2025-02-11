@@ -1,20 +1,20 @@
 import { readFileSync } from 'fs';
-import { IWorkerFilePreProcessorOptions } from '../../types';
+import { ICodePreProcessorOptions } from '../../types';
 import { IImportRequire, TechType } from './model';
 import { checkForNodeBinaryDependency, handleBinaryDependencies, parseImportRequire } from './helpers';
 
-export class WorkerFilePreProcessor {
+export class CodePreProcessor {
   private _filePath?: string;
   private _techType?: TechType;
 
   private _inputCode: string;
   private _outputCode: string;
 
-  private _options: IWorkerFilePreProcessorOptions;
+  private _options: ICodePreProcessorOptions;
 
   private constructor(
     code: string,
-    options: IWorkerFilePreProcessorOptions = {},
+    options: ICodePreProcessorOptions = {},
     filePath?: string,
     techType?: TechType
   ) {
@@ -29,23 +29,23 @@ export class WorkerFilePreProcessor {
    * 
    * @param filePath Path to the source file
    * @param options Configuration options
-   * @returns A new WorkerFilePreProcessor
+   * @returns A new CodePreProcessor
    */
   static fromFile(
     filePath: string,
-    options: IWorkerFilePreProcessorOptions = {}
-  ): WorkerFilePreProcessor {
+    options: ICodePreProcessorOptions = {}
+  ): CodePreProcessor {
     try {
       const fileContents = readFileSync(filePath, {
         encoding: 'utf-8',
       });
-      return new WorkerFilePreProcessor(
+      return new CodePreProcessor(
         fileContents,
         options,
         filePath
       );
     } catch(e) {
-      throw new Error("could not load worker file");
+      throw new Error(`could not load code file: ${filePath}`);
     }
   }
 
@@ -54,14 +54,14 @@ export class WorkerFilePreProcessor {
    * @param code TS or JS code as a string
    * @param options Configuration options
    * @param techType TS or JS
-   * @returns A new WorkerFilePreProcessor
+   * @returns A new CodePreProcessor
    */
   static fromCode(
     code: string,
-    options: IWorkerFilePreProcessorOptions = {},
-    techType: TechType
-  ): WorkerFilePreProcessor {
-    return new WorkerFilePreProcessor(
+    techType: TechType,
+    options: ICodePreProcessorOptions = {}
+  ): CodePreProcessor {
+    return new CodePreProcessor(
       code,
       options,
       undefined,
@@ -70,9 +70,21 @@ export class WorkerFilePreProcessor {
   }
 
   /**
+   * Retrieves the original code that was provided at instantiation
+   * @returns The original code as a string
+   */
+  getInputCode = () => this._inputCode;
+  
+  /**
+   * Retrieve the code that had already been manipulated
+   * @returns Code that has already undergone manipulations
+   */
+  getOutputCode = () => this._outputCode;
+
+  /**
    * See whether the file has dependencies on any .node binaries
    */
-  getNodeBinaryDependency = checkForNodeBinaryDependency;
+  getNodeBinaryDependencies = checkForNodeBinaryDependency;
 
   /**
    * Retrieve import and require statements from the code
@@ -94,6 +106,7 @@ export class WorkerFilePreProcessor {
    * dependencies.
    * @returns Processed output code
    */
+  /*
   processBinaryDependencies(): string {
     const importRequire = this.getImportRequireStatements();
     const deps = this.getNodeBinaryDependency(importRequire);
@@ -104,4 +117,5 @@ export class WorkerFilePreProcessor {
     this._outputCode = result;
     return result;
   }
+  */
 }

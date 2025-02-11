@@ -1,6 +1,6 @@
 import { scanForBinaryMatches } from '../src/node/pre-processor/helpers';
 import { IBinaryMatch } from '../src/node/pre-processor/model';
-import { WorkerFilePreProcessor } from '../src/node/pre-processor/index'
+import { CodePreProcessor } from '../src/node/pre-processor/index'
 import { MOCK_DIR } from './mock/contstants';
 import { NodeOmniWorker } from '../src';
 import { TestBinaryImportWorkerModel } from './mock/worker-model';
@@ -18,7 +18,7 @@ test('all binaries are returned', async () => {
 });
 
 test('import and required statements are resolved', () => {
-  const processor = WorkerFilePreProcessor
+  const processor = CodePreProcessor
     .fromFile(`${MOCK_DIR}/binary.worker.ts`);
 
   const importRequire = processor.getImportRequireStatements();
@@ -27,30 +27,33 @@ test('import and required statements are resolved', () => {
 });
 
 test('binary dependencies are being picked up on', () => {
-  const processor = WorkerFilePreProcessor
+  const processor = CodePreProcessor
     .fromFile(`${MOCK_DIR}/binary.worker.ts`);
 
   const importRequire = processor.getImportRequireStatements();
-  const binaryDependencies = processor.getNodeBinaryDependency(importRequire);
+  const binaryDependencies = processor.getNodeBinaryDependencies(importRequire);
   expect(binaryDependencies.length).toBe(2);
 });
 
+/*
 test('binary dependency imports are being swapped out by binary requires', () => {
-  const processor = WorkerFilePreProcessor
+  const processor = CodePreProcessor
     .fromFile(`${MOCK_DIR}/binary.worker.ts`);
   
   const resultCode = processor.processBinaryDependencies();
   // console.log('.ts code:\n', resultCode);
   expect(resultCode).toBeDefined();
 });
+*/
 
 test('binary dependency pre-processing also works on .js', () => {
-  const processor = WorkerFilePreProcessor
+  const processor = CodePreProcessor
     .fromFile(`${MOCK_DIR}/binary.worker.js`);
+
+  const code = processor.getOutputCode();
   
-  const resultCode = processor.processBinaryDependencies();
   // console.log('.js code:\n', resultCode);
-  expect(resultCode).toBeDefined();
+  expect(code).toBeDefined();
 });
 
 test('calling a function that depends on a binary', async () => {
