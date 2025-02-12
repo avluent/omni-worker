@@ -204,6 +204,8 @@ const config: Config = {
     }],
   },
   moduleFileExtensions: ["ts", "js", "json", "node"],
+  // testTimeout: 2147483647
+  testTimeout: 5000
 };
 
 export default config;

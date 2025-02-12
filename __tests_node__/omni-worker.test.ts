@@ -9,7 +9,7 @@ test('Node test: process should be defined', () => {
 
 test('initializes and calls a NodeOmniWorker', async () => {
   const worker = await NodeOmniWorker
-    .build<TestWorkerModel>(`${MOCK_DIR}/worker`);
+    .build<TestWorkerModel>(`${MOCK_DIR}/worker.ts`);
 
   const isInitialized = worker.isInitialized();
   expect(isInitialized).toBeTruthy();
@@ -20,7 +20,7 @@ test('initializes and calls a NodeOmniWorker', async () => {
 
 test('initializes and calls an OmniWorker consuming 3rd party imports', async () => {
   const worker = await NodeOmniWorker
-    .build<TestImportWorkerModel>(`${MOCK_DIR}/import.worker`);
+    .build<TestImportWorkerModel>(`${MOCK_DIR}/import.worker.ts`);
 
   const isInitialized = worker.isInitialized();
   expect(isInitialized).toBeTruthy();
