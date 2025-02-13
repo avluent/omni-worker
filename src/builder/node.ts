@@ -4,7 +4,9 @@ import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import * as _path from 'path';
 import { buildWorkerCode, getCallerDir } from './helpers';
 
-export const buildApiNode = async <T>(path: string): Promise<Comlink.Remote<T>> => {
+export const buildApiNode = async <T>(
+  path: string
+): Promise<{ api: Comlink.Remote<T>, worker: Worker}> => {
 
   const callerDir = getCallerDir();
   const resolvedPath = _path.resolve(callerDir, path);
@@ -14,5 +16,5 @@ export const buildApiNode = async <T>(path: string): Promise<Comlink.Remote<T>> 
   const worker = new Worker(js, { eval: true });
   const api = Comlink.wrap<T>(nodeEndpoint(worker));
 
-  return api;
+  return { api, worker };
 }

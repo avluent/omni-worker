@@ -1,7 +1,6 @@
+import nodeExternals from 'webpack-node-externals';
 import path from 'path';
-import fs from 'fs';
-import ts from 'typescript';
-import { getWebpackConfig, tsCompilerOptions, tsNodeCompilerOptions } from './constants';
+import { Configuration } from "webpack";
 import MemoryFS from 'memory-fs';
 import { OutputFileSystem, webpack } from 'webpack';
 
@@ -20,23 +19,25 @@ export function getCallerDir() {
   }
 }
 
-const mfs = new MemoryFS();
-
 export function buildWorkerCode(entryFile: string) {
-  const compiler = webpack(getWebpackConfig(entryFile));
-  compiler.outputFileSystem = mfs as unknown as OutputFileSystem;
+  const mfs = new MemoryFS();
 
   return new Promise<string>((resolve, reject) => {
+    const compiler = webpack(getWebpackConfig(entryFile));
+    compiler.outputFileSystem = mfs as unknown as OutputFileSystem;
+
     compiler.run((err, stats) => {
       if (err) {
         reject(err);
         return;
       }
 
+      /*
       console.log(stats?.toString({
         chunks: false,
         colors: true
       }));
+      */
 
       const bundledCode = mfs
         .readFileSync(path.join('/virtual', 'bundle.js'), 'utf8');
@@ -46,5 +47,46 @@ export function buildWorkerCode(entryFile: string) {
   });
 }
 
-
-// Create a compiler instance with the Webpack configuration
+const getWebpackConfig = (entry: string): Configuration => ({
+  entry,
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve('/virtual'),
+    libraryTarget: 'commonjs2',
+    module: false,
+    iife: false,
+    umdNamedDefine: true,
+  },
+  resolve: {
+    extensions: ['.ts', '.js'], 
+    fallback: {
+      path: false,
+      worker_threads: false,
+      fs: false,
+    }
+  },
+  mode: 'development',
+  module: {
+    rules: [
+      {
+        test: /\.ts$/, 
+        use:  [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-typescript'],
+              plugins: ['@babel/plugin-transform-modules-commonjs']
+            },
+          }
+        ],
+        exclude: /node_modules/
+      }
+    ],
+  },
+  devtool: 'source-map',
+  stats: 'verbose',
+  externals: [nodeExternals({
+    importType: 'commonjs',
+  })],
+  cache: false
+});

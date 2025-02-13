@@ -1,14 +1,19 @@
 import { IOmniWorker } from '../types/index.d';
-import { parentPort } from 'worker_threads';
+import { parentPort, Worker } from 'worker_threads';
 import * as Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
 import { buildApiNode } from '../builder/node';
 
 export class NodeOmniWorker<T> implements IOmniWorker<T> {
   private _api: Comlink.Remote<T>;
+  private _worker: Worker;
 
-  private constructor(api: Comlink.Remote<T>) {
+  private constructor(
+    api: Comlink.Remote<T>,
+    worker: Worker
+  ) {
     this._api = api;
+    this._worker = worker;
     return this;
   }
 
@@ -35,8 +40,8 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
   public static async build<T extends object>(
     path: string
   ): Promise<NodeOmniWorker<T>> {
-    const api = await buildApiNode<T>(path);
-    return new NodeOmniWorker<T>(api);
+    const { api, worker } = await buildApiNode<T>(path);
+    return new NodeOmniWorker<T>(api, worker);
   }
 
   public isInitialized = (): boolean => (
@@ -50,5 +55,9 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
     } else {
       throw Error('worker is not yet initialized. make sure to call the .set() function, first');
     }
+  }
+
+  public destroy = async () => {
+    await this._worker.terminate();
   }
 }
