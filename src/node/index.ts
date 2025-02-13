@@ -1,7 +1,7 @@
 import { IOmniWorker } from '../types/index.d';
 import { parentPort, Worker } from 'worker_threads';
 import * as Comlink from 'comlink';
-import nodeEndpoint from 'comlink/dist/umd/node-adapter.js';
+import nodeEndpoint from 'comlink/dist/umd/node-adapter';
 import { buildApiNode } from '../builder/node';
 
 export class NodeOmniWorker<T> implements IOmniWorker<T> {
