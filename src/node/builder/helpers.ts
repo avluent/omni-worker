@@ -1,8 +1,12 @@
 import nodeExternals from 'webpack-node-externals';
 import path from 'path';
 import { Configuration } from "webpack";
-import MemoryFS from 'memory-fs';
-import { OutputFileSystem, webpack } from 'webpack';
+import fs from 'fs';
+import { webpack } from 'webpack';
+
+const BUILD_PATH = path.resolve(process.cwd(), '.out');
+const BUILD_FILENAME = 'bundle.js';
+const BUILD_FILE_PATH = path.resolve( BUILD_PATH, BUILD_FILENAME);
 
 export function getCallerDir() {
   try {
@@ -20,11 +24,8 @@ export function getCallerDir() {
 }
 
 export function buildWorkerCode(entryFile: string) {
-  const mfs = new MemoryFS();
-
   return new Promise<string>((resolve, reject) => {
     const compiler = webpack(getWebpackConfig(entryFile));
-    compiler.outputFileSystem = mfs as unknown as OutputFileSystem;
 
     compiler.run((err, stats) => {
       if (err) {
@@ -39,8 +40,8 @@ export function buildWorkerCode(entryFile: string) {
       }));
       */
 
-      const bundledCode = mfs
-        .readFileSync(path.join('/virtual', 'bundle.js'), 'utf8');
+      const bundledCode = fs
+        .readFileSync(BUILD_FILE_PATH, 'utf8');
 
       resolve(bundledCode);
     });
@@ -50,8 +51,8 @@ export function buildWorkerCode(entryFile: string) {
 const getWebpackConfig = (entry: string): Configuration => ({
   entry,
   output: {
-    filename: 'bundle.js',
-    path: path.resolve('/virtual'),
+    filename: BUILD_FILENAME,
+    path: BUILD_PATH,
     libraryTarget: 'commonjs2',
     module: false,
     iife: false,
@@ -66,6 +67,7 @@ const getWebpackConfig = (entry: string): Configuration => ({
     }
   },
   mode: 'development',
+  target: 'node',
   module: {
     rules: [
       {
