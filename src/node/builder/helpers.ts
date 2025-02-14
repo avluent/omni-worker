@@ -4,9 +4,9 @@ import { Configuration } from "webpack";
 import fs from 'fs';
 import { webpack } from 'webpack';
 
-const BUILD_PATH = path.resolve(process.cwd(), '.out');
+const BUILD_PATH = path.join(__dirname, '.out');
 const BUILD_FILENAME = 'bundle.js';
-const BUILD_FILE_PATH = path.resolve( BUILD_PATH, BUILD_FILENAME);
+const BUILD_FILE_PATH = path.join( BUILD_PATH, BUILD_FILENAME);
 
 export function getCallerDir() {
   try {
@@ -18,14 +18,21 @@ export function getCallerDir() {
 
     return dirName;
   } catch (e) {
-    console.error('building caller path failed', e);
+    // console.error('building caller path failed', e);
     return './';
   }
 }
 
 export function buildWorkerCode(entryFile: string) {
   return new Promise<string>((resolve, reject) => {
-    const compiler = webpack(getWebpackConfig(entryFile));
+
+    if (!fs.existsSync(BUILD_PATH)) {
+      fs.mkdirSync(BUILD_PATH, { recursive: true });
+      // console.log(`created '${BUILD_PATH}' successfully!`);
+    }
+
+    const config = getWebpackConfig(entryFile);
+    const compiler = webpack(config);
 
     compiler.run((err, stats) => {
       if (err) {
@@ -48,6 +55,14 @@ export function buildWorkerCode(entryFile: string) {
   });
 }
 
+const resolveNodeModules = (packageName: string) => 
+  require.resolve(packageName,
+    {
+      paths: [
+        path.resolve(__dirname, 'node_modules')
+      ]
+    });
+
 const getWebpackConfig = (entry: string): Configuration => ({
   entry,
   output: {
@@ -66,6 +81,11 @@ const getWebpackConfig = (entry: string): Configuration => ({
       fs: false,
     }
   },
+  resolveLoader: {
+    modules: [
+      path.resolve(process.cwd(), 'node_modules')
+    ]
+  },
   mode: 'development',
   target: 'node',
   module: {
@@ -74,10 +94,15 @@ const getWebpackConfig = (entry: string): Configuration => ({
         test: /\.ts$/, 
         use:  [
           {
-            loader: 'babel-loader',
+            loader: resolveNodeModules('babel-loader'),
             options: {
-              presets: ['@babel/preset-env', '@babel/preset-typescript'],
-              plugins: ['@babel/plugin-transform-modules-commonjs']
+              presets: [
+                resolveNodeModules('@babel/preset-env'),
+                resolveNodeModules('@babel/preset-typescript')
+              ],
+              plugins: [
+                resolveNodeModules('@babel/plugin-transform-modules-commonjs')
+              ]
             },
           }
         ],
