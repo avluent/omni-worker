@@ -3,7 +3,12 @@ import { IOmniWorker } from "./omni-worker"
 /**
  * A pool with multiple OmniWorkers
  */
-export interface IOmniWorkerPool<T> extends IOmniWorker<T> { }
+export interface IOmniWorkerPool<T> extends IOmniWorker<T> {
+  /**
+   * Retrieves the number of workers that were initialized for the pool
+   */
+  getNumOfWorkers: () => number
+}
 
 export interface IPoolable<T> {
   /**

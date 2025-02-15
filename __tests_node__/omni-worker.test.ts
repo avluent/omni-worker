@@ -1,14 +1,7 @@
-import { describe, expect, test, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
+import { describe, expect, test, beforeAll, afterAll } from "vitest";
 import { NodeOmniWorker } from '../src/index';
 import { TestImportWorkerModel, TestNativeWorkerModel, TestWorkerModel } from './mock/worker-model';
-
-const MOCK_DIR = './__tests_node__/mock';
-
-describe('environment', () => {
-  test('we are on nodeJS', () => {
-    expect(process).toBeDefined();
-  });
-});
+import { MOCK_DIR } from './mock/constants';
 
 describe('NodeOmniWorker', () => {
 

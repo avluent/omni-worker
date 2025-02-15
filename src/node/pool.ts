@@ -69,6 +69,8 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
 
   public isInitialized = () => this._count > 0;
 
+  public getNumOfWorkers = () => this._count;
+
   public use = () => {
     if (!this.isInitialized()) {
       return this._from.use();
