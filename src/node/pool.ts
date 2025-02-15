@@ -37,7 +37,7 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
    * @param worker An already built NodeOmniWorker
    * @returns A newly created pool
    */
-  public static launch<T extends object>(
+  private static launch<T extends object>(
     worker: NodeOmniWorker<T>,
     options?: IOmniWorkerPoolOptions
   ): NodeOmniWorkerPool<T> {

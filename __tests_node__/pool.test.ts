@@ -6,35 +6,6 @@ import { MOCK_DIR } from './mock/constants';
 
 describe('OmniWorker Pool', () => {
 
-  describe('Launches a new NodeOmniWorkerPool from an existing worker', () => {
-    let worker: NodeOmniWorker<TestWorkerModel>;
-    let pool: NodeOmniWorkerPool<TestWorkerModel>;
-
-    beforeAll(async () => {
-      worker = await NodeOmniWorker
-        .build<TestWorkerModel>(`${MOCK_DIR}/worker.ts`);
-
-      pool = NodeOmniWorkerPool
-        .launch<TestWorkerModel>(worker, { numOfWorkers: 2 });
-    });
-
-    test('The number of instantiated workers is correct', () => {
-      const numOfWorkers = pool.getNumOfWorkers();
-      expect(numOfWorkers).toBe(2);
-    });
-
-    test('Calls from the worker pool are being executed', async () => {
-      const result = await pool.use().add(18, 22);
-      const result2 = await pool.use().add(48, 32);
-      expect(result).toBe(40);
-      expect(result2).toBe(80);
-    });
-
-    afterAll(async () => {
-      await pool.destroy();
-    });
-  });
-
   describe('Launches a new NodeOmniWorkerPool from a worker file path', () => {
     let pool: NodeOmniWorkerPool<TestImportWorkerModel>;
 

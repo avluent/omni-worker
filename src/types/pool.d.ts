@@ -17,13 +17,6 @@ export interface IPoolable<T> {
    * @returns a collection of OmniWorkers
    */
   clone: (numOfTimes: number) => IOmniWorker<T>[]
-
-  /**
-   * Launches a pool from a single OmniWorker
-   * @param options 
-   * @returns A new OmniWorkerPool instance
-   */
-  toPool: <T extends object>(options: IPoolOptions) => IOmniWorkerPool<T>
 }
 
 /**

@@ -3,8 +3,7 @@ import { parentPort, Worker } from 'worker_threads';
 import Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter';
 import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder';
-import { IPoolable, IPoolOptions } from '../types/pool.d';
-import { NodeOmniWorkerPool } from './pool';
+import { IPoolable } from '../types/pool.d';
 
 export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
   private _api: Comlink.RemoteObject<T>;
@@ -72,9 +71,6 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
     }
     return workers;
   }
-
-  public toPool = <T extends object>(options?: IPoolOptions): NodeOmniWorkerPool<T> => 
-    NodeOmniWorkerPool.launch<T>(this as unknown as NodeOmniWorker<T>, options);
 
   public destroy = async () => {
     await this._worker.terminate();
