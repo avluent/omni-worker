@@ -16,7 +16,7 @@ export interface IPoolable<T> {
    * @param numOfTimes how many times the item should be cloned
    * @returns a collection of OmniWorkers
    */
-  clone: (numOfTimes: number) => IOmniWorker<T>[]
+  clone: (options: IPoolOptions) => Promise<IOmniWorker<T>[]>
 }
 
 /**
@@ -27,6 +27,13 @@ export interface IPoolOptions {
    * The desired number of workers to be launched
    */
   numOfWorkers?: number
+
+  /**
+   * Determines whether the code is built freshly for each worker.
+   * This is recommended for workers that depend on .node native code.
+   * Setting this to true will significantly increase warm-up time.
+   */
+  freshCode?: boolean
 }
 
 /**

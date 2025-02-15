@@ -52,12 +52,14 @@ export function buildWorkerCode(entryFile: string) {
 
       resolve(bundledCode);
 
-      // clean up the build folder
+      // clean up the build folder --> Causes Race Conditions
+      /*
       fs.rm(BUILD_PATH, { recursive: true, force: true }, (err) => {
         if (err) {
           reject(err);
         }
       });
+      */
     });
   });
 }

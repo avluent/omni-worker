@@ -1,7 +1,6 @@
-import { describe, test, expect, beforeAll, afterAll, expectTypeOf } from 'vitest';
-import { NodeOmniWorker } from '../src/node';
+import { describe, test, expect, beforeAll, afterAll } from 'vitest';
 import { NodeOmniWorkerPool } from '../src/node/pool';
-import { TestImportWorkerModel, TestWorkerModel } from './mock/worker-model';
+import { TestImportWorkerModel } from './mock/worker-model';
 import { MOCK_DIR } from './mock/constants';
 
 describe('OmniWorker Pool', () => {
@@ -12,7 +11,8 @@ describe('OmniWorker Pool', () => {
     beforeAll(async () => {
       pool = await NodeOmniWorkerPool
         .buildAndLaunch(`${MOCK_DIR}/import.worker.ts`, {
-          numOfWorkers: 4
+          numOfWorkers: 4,
+          freshCode: true
         });
     });
 
@@ -41,4 +41,4 @@ describe('OmniWorker Pool', () => {
       await pool.destroy();
     });
   });
-});
+}, 10_000);

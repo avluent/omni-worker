@@ -1,6 +1,7 @@
 export {
   IOmniWorker,
   IOmniWorkerPoolOptions,
+  IPoolOptions
 } from './types/index.d';
 
 export {

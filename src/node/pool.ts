@@ -15,7 +15,6 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
   ) {
     this._from = from;
     this._options = options || { numOfWorkers: 1 };
-    this.applyOptions();
   }
 
   /**
@@ -28,7 +27,7 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
     options?: IOmniWorkerPoolOptions
   ): Promise<NodeOmniWorkerPool<T>> {
     const worker = await NodeOmniWorker.build<T>(from);
-    const pool: NodeOmniWorkerPool<T> = NodeOmniWorkerPool.launch<T>(worker, options);
+    const pool = await NodeOmniWorkerPool.launch<T>(worker, options);
     return pool;
   }
 
@@ -37,19 +36,26 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
    * @param worker An already built NodeOmniWorker
    * @returns A newly created pool
    */
-  private static launch<T extends object>(
+  private static async launch<T extends object>(
     worker: NodeOmniWorker<T>,
     options?: IOmniWorkerPoolOptions
-  ): NodeOmniWorkerPool<T> {
+  ): Promise<NodeOmniWorkerPool<T>> {
     const pool = new NodeOmniWorkerPool<T>(worker, options);
+    await pool.applyOptions(options);
     return pool;
   }
 
   /**
    * Applies the options provided
    */
-  private applyOptions() {
-    const { numOfWorkers } = this._options;
+  private async applyOptions(options: IOmniWorkerPoolOptions = {
+    numOfWorkers: 1,
+    freshCode: false
+  }) {
+    const {
+      numOfWorkers,
+      freshCode
+    } = options;
 
     let count = 0;
     if (numOfWorkers === undefined) {
@@ -63,7 +69,10 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
     }
     this._count = count;
     for (let i = 0; i <= count; i++) {
-      this._pool = this._from.clone(count);
+      this._pool = await this._from.clone({
+        numOfWorkers: count,
+        freshCode
+      });
     }
   }
 

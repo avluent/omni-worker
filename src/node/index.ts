@@ -3,18 +3,21 @@ import { parentPort, Worker } from 'worker_threads';
 import Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter';
 import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder';
-import { IPoolable } from '../types/pool.d';
+import { IPoolable, IPoolOptions } from '../types/pool.d';
 
 export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
+  private _path: string;
+  private _code: string;
   private _api: Comlink.RemoteObject<T>;
   private _worker: Worker;
-  private _code: string;
 
   private constructor(
+    path: string,
     code: string,
     worker: Worker,
     api: Comlink.RemoteObject<T>
   ) {
+    this._path = path;
     this._code = code;
     this._worker = worker;
     this._api = api;
@@ -46,7 +49,7 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
   ): Promise<NodeOmniWorker<T>> {
     const code = await genWorkerCodeFromFile(path);
     const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
-    return new NodeOmniWorker<T>(code, worker, api);
+    return new NodeOmniWorker<T>(path, code, worker, api);
   }
 
   public isInitialized = (): boolean => (
@@ -62,14 +65,45 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
     }
   }
 
-  public clone = (numOfTimes: number) => {
-    const workers: NodeOmniWorker<T>[] = [];
-    for (let i = 0; i <= numOfTimes; i++) {
-      const code = this._code;
-      const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
-      workers.push(new NodeOmniWorker<T>(code, worker, api));
+  public clone = async (options: IPoolOptions = {
+    numOfWorkers: 1,
+    freshCode: false
+  }) => {
+
+    const {
+      numOfWorkers,
+      freshCode
+    } = options;
+
+    const _numOfWorkers = numOfWorkers === undefined ? 1 : numOfWorkers;
+
+    const freshFns: (() => Promise<NodeOmniWorker<T>>)[] = [];
+    const unFreshWorkers: NodeOmniWorker<T>[] = [];
+    const path = this._path;
+    const code = this._code;
+
+    // If static code should be re-used
+    if (!freshCode) {
+      for (let i = 0; i <= _numOfWorkers; i++) {
+        const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
+        unFreshWorkers.push(new NodeOmniWorker<T>(path, code, worker, api));
+      }
+      return unFreshWorkers;
     }
-    return workers;
+
+    // If new code should be built each time
+    else {
+      for (let i = 0; i <= _numOfWorkers; i++) {
+        const fn = async (): Promise<NodeOmniWorker<T>> => {
+          const code = await genWorkerCodeFromFile(path);
+          const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
+          return new NodeOmniWorker<T>(path, code, worker, api);
+        }
+        freshFns.push(fn);
+      }
+      const freshWorkers = await Promise.all(freshFns.map(fn => fn()));
+      return freshWorkers;
+    }
   }
 
   public destroy = async () => {
