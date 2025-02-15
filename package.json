@@ -51,6 +51,7 @@
     "@babel/preset-typescript": "^7.26.0",
     "babel-loader": "^9.2.1",
     "comlink": "^4.4.2",
+    "terser-webpack-plugin": "^5.3.11",
     "webpack": "^5.97.1",
     "webpack-node-externals": "^3.0.0"
   }

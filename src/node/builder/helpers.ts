@@ -3,10 +3,11 @@ import path from 'path';
 import { Configuration } from "webpack";
 import fs from 'fs';
 import { webpack } from 'webpack';
+import TerserPlugin from 'terser-webpack-plugin';
 
 const BUILD_PATH = path.join(__dirname, '.out');
 const BUILD_FILENAME = 'bundle.js';
-const BUILD_FILE_PATH = path.join( BUILD_PATH, BUILD_FILENAME);
+const BUILD_FILE_PATH = path.join(BUILD_PATH, BUILD_FILENAME);
 
 export function getCallerDir() {
   try {
@@ -28,7 +29,6 @@ export function buildWorkerCode(entryFile: string) {
 
     if (!fs.existsSync(BUILD_PATH)) {
       fs.mkdirSync(BUILD_PATH, { recursive: true });
-      // console.log(`created '${BUILD_PATH}' successfully!`);
     }
 
     const config = getWebpackConfig(entryFile);
@@ -51,6 +51,13 @@ export function buildWorkerCode(entryFile: string) {
         .readFileSync(BUILD_FILE_PATH, 'utf8');
 
       resolve(bundledCode);
+
+      // clean up the build folder
+      fs.rm(BUILD_PATH, { recursive: true, force: true }, (err) => {
+        if (err) {
+          reject(err);
+        }
+      });
     });
   });
 }
@@ -76,17 +83,56 @@ const getWebpackConfig = (entry: string): Configuration => ({
   resolve: {
     extensions: ['.ts', '.js'], 
     fallback: {
-      path: false,
-      worker_threads: false,
+      assert: false,
+      buffer: false,
+      console: false,
+      constants: false,
+      crypto: false,
+      domain: false,
+      events: false,
       fs: false,
-    }
+      http: false,
+      https: false,
+      module: false,
+      net: false,
+      os: false,
+      path: false,
+      process: false,
+      punycode: false,
+      querystring: false,
+      readline: false,
+      stream: false,
+      string_decoder: false,
+      sys: false,
+      timers: false,
+      tls: false,
+      tty: false,
+      url: false,
+      util: false,
+      vm: false,
+      worker_threads: false,
+      zlib: false,
+    },
   },
   resolveLoader: {
     modules: [
       path.resolve(process.cwd(), 'node_modules')
     ]
   },
-  mode: 'development',
+  mode: 'production',
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true
+          },
+        }
+      })
+    ]
+  },
   target: 'node',
   module: {
     rules: [
