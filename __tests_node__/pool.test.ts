@@ -1,7 +1,6 @@
-import { describe, test, expect, beforeAll, afterAll, expectTypeOf } from 'vitest';
-import { NodeOmniWorker } from '../src/node';
+import { describe, test, expect, beforeAll, afterAll } from 'vitest';
 import { NodeOmniWorkerPool } from '../src/node/pool';
-import { TestImportWorkerModel, TestWorkerModel } from './mock/worker-model';
+import { TestImportWorkerModel } from './mock/worker-model';
 import { MOCK_DIR } from './mock/constants';
 
 describe('OmniWorker Pool', () => {
