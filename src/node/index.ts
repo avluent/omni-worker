@@ -1,19 +1,24 @@
 import { IOmniWorker } from '../types/index.d';
 import { parentPort, Worker } from 'worker_threads';
-import * as Comlink from 'comlink';
+import Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter';
-import { buildApiNode } from './builder/node';
+import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder';
+import { IPoolable, IPoolOptions } from '../types/pool.d';
+import { NodeOmniWorkerPool } from './pool';
 
-export class NodeOmniWorker<T> implements IOmniWorker<T> {
-  private _api: Comlink.Remote<T>;
+export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
+  private _api: Comlink.RemoteObject<T>;
   private _worker: Worker;
+  private _code: string;
 
   private constructor(
-    api: Comlink.Remote<T>,
-    worker: Worker
+    code: string,
+    worker: Worker,
+    api: Comlink.RemoteObject<T>
   ) {
-    this._api = api;
+    this._code = code;
     this._worker = worker;
+    this._api = api;
     return this;
   }
 
@@ -23,7 +28,7 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
    * @param functions An object with functions inside the worker to be exposed to
    * the rest of the application.
    */
-  public static expose = <T>(functions: T) => {
+  public static expose = <T extends object>(functions: T) => {
     if (parentPort) {
       Comlink.expose(functions, nodeEndpoint(parentPort));
     }
@@ -40,8 +45,9 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
   public static async build<T extends object>(
     path: string
   ): Promise<NodeOmniWorker<T>> {
-    const { api, worker } = await buildApiNode<T>(path);
-    return new NodeOmniWorker<T>(api, worker);
+    const code = await genWorkerCodeFromFile(path);
+    const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
+    return new NodeOmniWorker<T>(code, worker, api);
   }
 
   public isInitialized = (): boolean => (
@@ -56,6 +62,19 @@ export class NodeOmniWorker<T> implements IOmniWorker<T> {
       throw Error('worker is not yet initialized. make sure to call the .set() function, first');
     }
   }
+
+  public clone = (numOfTimes: number) => {
+    const workers: NodeOmniWorker<T>[] = [];
+    for (let i = 0; i <= numOfTimes; i++) {
+      const code = this._code;
+      const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
+      workers.push(new NodeOmniWorker<T>(code, worker, api));
+    }
+    return workers;
+  }
+
+  public toPool = <T extends object>(options?: IPoolOptions): NodeOmniWorkerPool<T> => 
+    NodeOmniWorkerPool.launch<T>(this as unknown as NodeOmniWorker<T>, options);
 
   public destroy = async () => {
     await this._worker.terminate();
