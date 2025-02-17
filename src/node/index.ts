@@ -1,18 +1,22 @@
-import { IOmniWorker } from '../types/index.d';
-import { parentPort, Worker } from 'worker_threads';
+import { IBuildable, IExposable, IOmniWorker } from '../types/index.d';
+import { parentPort, Worker as ThreadWorker } from 'worker_threads';
 import Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter';
 import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder';
 import { IPoolable } from '../types/pool.d';
+import { staticImplements } from '../types/helpers';
 
+@staticImplements<IBuildable>()
+@staticImplements<IExposable>()
 export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
-  private _api: Comlink.RemoteObject<T>;
-  private _worker: Worker;
+
   private _code: string;
+  private _worker: ThreadWorker;
+  private _api: Comlink.RemoteObject<T>;
 
   private constructor(
     code: string,
-    worker: Worker,
+    worker: ThreadWorker,
     api: Comlink.RemoteObject<T>
   ) {
     this._code = code;
@@ -21,27 +25,13 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
     return this;
   }
 
-  /**
-   * Expose the functions inside the worker to the rest of the application.
-   * After having exposed the functions, the build step can be initiated.
-   * @param functions An object with functions inside the worker to be exposed to
-   * the rest of the application.
-   */
-  public static expose = <T extends object>(functions: T) => {
+  public static expose = <T>(functions: T) => {
     if (parentPort) {
       Comlink.expose(functions, nodeEndpoint(parentPort));
     }
   }
 
-  /**
-   * Build the OmniWorker from a worker file. Please note that the functions
-   * on the worker file need to first be exposed using the expose({ <functions> })
-   * functions, in order to start this build step.
-   * 
-   * @param path The relative path to where the worker module is located
-   * @returns A new Node OmniWorker
-   */
-  public static async build<T extends object>(
+  public static async build<T>(
     path: string
   ): Promise<NodeOmniWorker<T>> {
     const code = await genWorkerCodeFromFile(path);

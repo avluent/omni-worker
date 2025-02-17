@@ -25,3 +25,33 @@ export interface IOmniWorker<T> {
    */
   destroy: () => Promise<void>
 }
+
+/**
+ * Defines whether the class is buildable, meaning that class can be made into
+ * a OmniWorker type.
+ */
+export interface IBuildable {
+  
+  /**
+   * Handles the building of the necessary resources for an OmniWorker to function.
+   * This usually means, building from the consumer's code, creating the comlink
+   * interface between the worker and the main thread as well as the worker itself.
+   * 
+   * @param path Relative path from project root to the file to be used inside the worker
+   * @returns An OmniWorker
+   */
+  build: <T>(path: string) => Promise<IOmniWorker<T>>
+}
+
+/**
+ * Defines whether the class can expose code from the module user to the main thread.
+ */
+export interface IExposable {
+  /**
+   * Expose the functions inside the worker to the rest of the application.
+   * After having exposed the functions, the build step can be initiated.
+   * @param functions An object with functions inside the worker to be exposed to
+   * the rest of the application.
+   */
+  expose: <T>(functions: T) => void
+}

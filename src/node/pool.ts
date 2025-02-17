@@ -1,6 +1,8 @@
 import { NodeOmniWorker } from ".";
-import { IOmniWorkerPool, IOmniWorkerPoolOptions } from "../types/pool.d";
+import { staticImplements } from "../types/helpers";
+import { IOmniWorkerPool, IOmniWorkerPoolOptions, ILaunchable } from "../types/pool.d";
 
+@staticImplements<ILaunchable>()
 export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
 
   private _pool: NodeOmniWorker<T>[] = [];
@@ -23,7 +25,7 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
    * @param from The (relative) file path from your project's root to the worker .ts file
    * @param options (Optional) Options object for launching the pool
    */
-  public static async buildAndLaunch<T extends object>(
+  public static async buildAndLaunch<T>(
     from: string,
     options?: IOmniWorkerPoolOptions
   ): Promise<NodeOmniWorkerPool<T>> {
@@ -37,7 +39,7 @@ export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
    * @param worker An already built NodeOmniWorker
    * @returns A newly created pool
    */
-  private static launch<T extends object>(
+  static launch<T>(
     worker: NodeOmniWorker<T>,
     options?: IOmniWorkerPoolOptions
   ): NodeOmniWorkerPool<T> {
