@@ -6,6 +6,9 @@ import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder'
 import { IPoolable } from '../types/pool.d';
 import { staticImplements } from '../types/helpers';
 
+/**
+ * OmniWorker for NodeJS
+ */
 @staticImplements<IBuildable>()
 @staticImplements<IExposable>()
 export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
@@ -25,12 +28,26 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
     return this;
   }
 
-  public static expose = <T>(functions: T) => {
+  /**
+   * Expose the functions inside the worker to the rest of the application.
+   * After having exposed the functions, the build step can be initiated.
+   * @param exposable A class, object with functions or a single function to be
+   * exposed to the main thread.
+   */
+  public static expose = <T>(exposable: T) => {
     if (parentPort) {
-      Comlink.expose(functions, nodeEndpoint(parentPort));
+      Comlink.expose(exposable, nodeEndpoint(parentPort));
     }
   }
 
+  /**
+   * Handles the building of the necessary resources for an OmniWorker to function.
+   * This usually means, building from the consumer's code, creating the comlink
+   * interface between the worker and the main thread as well as the worker itself.
+   * 
+   * @param path Relative path from project root to the file to be used inside the worker
+   * @returns An OmniWorker
+   */
   public static async build<T>(
     path: string
   ): Promise<NodeOmniWorker<T>> {
@@ -48,7 +65,7 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
     if (isInitialized) {
       return this._api!;
     } else {
-      throw Error('worker is not yet initialized. make sure to call the .set() function, first');
+      throw Error('worker is not yet initialized. make sure to call the build() function, first');
     }
   }
 
