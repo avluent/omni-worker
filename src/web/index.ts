@@ -39,7 +39,8 @@ export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
    * This usually means, building from the consumer's code, creating the comlink
    * interface between the worker and the main thread as well as the worker itself.
    * 
-   * @param path Relative path from project root to the file to be used inside the worker
+   * @param path Relative path from the INVOCATION POINT OF THIS FUNCTION to the file
+   * to be the worker
    * @returns An OmniWorker
    */
   public static async build<T>(path: string): Promise<WebOmniWorker<T>> {

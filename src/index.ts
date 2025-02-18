@@ -1,11 +1,15 @@
 export {
   IOmniWorker,
   IOmniWorkerPoolOptions,
-} from './types/index.d';
+} from './types';
 
 export {
   NodeOmniWorker
 } from './node';
+
+export {
+  WebOmniWorker
+} from './web';
 
 export {
   NodeOmniWorkerPool

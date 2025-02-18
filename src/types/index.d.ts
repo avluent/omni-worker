@@ -1,2 +1,2 @@
-export * from './omni-worker.d';
-export * from './pool.d';
+export * from './omni-worker';
+export * from './pool';

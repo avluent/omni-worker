@@ -4,6 +4,7 @@ import { Configuration } from "webpack";
 import fs from 'fs';
 import { webpack } from 'webpack';
 import TerserPlugin from 'terser-webpack-plugin';
+import { resolveNodeModules } from '../../helpers/builder';
 
 const BUILD_PATH = path.join(__dirname, '.out');
 const BUILD_FILENAME = 'bundle.js';
@@ -46,14 +47,6 @@ export function buildWorkerCode(entryFile: string) {
     });
   });
 }
-
-const resolveNodeModules = (packageName: string) => 
-  require.resolve(packageName,
-    {
-      paths: [
-        path.resolve(__dirname, 'node_modules')
-      ]
-    });
 
 const getWebpackConfig = (entry: string): Configuration => ({
   entry,

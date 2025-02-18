@@ -1,9 +1,9 @@
-import { IBuildable, IExposable, IOmniWorker } from '../types/index.d';
+import { IBuildable, IExposable, IOmniWorker } from '../types/omni-worker';
 import { parentPort, Worker as ThreadWorker } from 'worker_threads';
 import Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter';
 import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder';
-import { IPoolable } from '../types/pool.d';
+import { IPoolable } from '../types/pool';
 import { staticImplements } from '../types/helpers';
 
 /**
@@ -45,7 +45,7 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
    * This usually means, building from the consumer's code, creating the comlink
    * interface between the worker and the main thread as well as the worker itself.
    * 
-   * @param path Relative path from project root to the file to be used inside the worker
+   * @param path Relative path FROM YOUR PROJECT's ROOT to the file to be the worker
    * @returns An OmniWorker
    */
   public static async build<T>(
