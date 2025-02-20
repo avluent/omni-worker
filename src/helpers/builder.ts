@@ -14,12 +14,3 @@ export function getCallerDir() {
     return './';
   }
 }
-
-export const resolveNodeModules = (packageName: string) => 
-  require.resolve(packageName,
-    {
-      paths: [
-        path.resolve(__dirname, 'node_modules')
-      ]
-    });
-

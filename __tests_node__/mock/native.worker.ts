@@ -1,4 +1,4 @@
-import { NodeOmniWorker } from "../../src";
+import { NodeOmniWorker } from "../../src/node";
 import { TestNativeWorkerModel } from "./worker-model";
 import { swe_julday } from 'swisseph';
 

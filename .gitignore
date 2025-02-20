@@ -6,6 +6,7 @@ dist/
 build/
 lib/
 **/.out/
+*.tgz
 
 # Testing
 coverage/

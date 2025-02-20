@@ -1,4 +1,4 @@
-import { NodeOmniWorker } from "../../src"
+import { NodeOmniWorker } from "../../src/node"
 import { TestWorkerModel } from "./worker-model";
 
 const functions: TestWorkerModel = {

@@ -10,6 +10,7 @@ __*
 /.idea/
 /*.test.js
 /*.spec.js
+/package/
 *.md
 *.tsbuildinfo
 *.swp
