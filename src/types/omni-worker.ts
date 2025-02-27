@@ -1,4 +1,4 @@
-import Comlink from 'comlink';
+import { RemoteObject } from 'comlink';
 
 /**
  * The base Interface for all workers
@@ -18,7 +18,7 @@ export interface IOmniWorker<T> {
    * 
    * @returns An object with the worker functions that were exposed from the worker
    */
-  use: () => Comlink.RemoteObject<T>
+  use: () => RemoteObject<T>
 
   /**
    * Terminates the underlying worker(s)

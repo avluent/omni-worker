@@ -1,4 +1,5 @@
-import { IBuildable, IExposable, IOmniWorker, IPoolable } from "../types";
+import { IBuildable, IExposable, IOmniWorker } from "../types/omni-worker";
+import { IPoolable } from "../types/pool";
 import Comlink from 'comlink';
 import { staticImplements } from "../types/helpers";
 import { buildWebApiAndWorkerFromCode, genWorkerCodeFromFile } from "./builder";

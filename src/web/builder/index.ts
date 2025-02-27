@@ -1,14 +1,10 @@
-import path from 'path';
-import { getCallerDir } from "../../helpers/builder"
 import { buildWorkerCode } from './helpers';
 import Comlink from 'comlink';
 
 export const genWorkerCodeFromFile = async (
   workerPath: string
 ): Promise<string> => {
-  const callerDir = getCallerDir();
-  const resolvedPath = path.resolve(callerDir, workerPath);
-  const code = await buildWorkerCode(resolvedPath);
+  const code = await buildWorkerCode(workerPath);
   return code;
 }
 
