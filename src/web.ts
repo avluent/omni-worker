@@ -1,10 +1,8 @@
 export {
   IOmniWorker,
-} from './types/omni-worker';
-
-export { 
+  IOmniWorkerPool,
   IOmniWorkerPoolOptions
-} from './types/pool';
+} from './types/web-omni-worker';
 
 export {
   WebOmniWorker

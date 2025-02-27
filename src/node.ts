@@ -1,15 +1,9 @@
 export {
   IOmniWorker,
-} from './types/omni-worker';
-
-export {
-  IOmniWorkerPool
-} from './types/pool';
+  IOmniWorkerPool,
+  IOmniWorkerPoolOptions
+} from './types/node-omni-worker';
 
 export {
   NodeOmniWorker
 } from './node/index';
-
-export {
-  NodeOmniWorkerPool
-} from './node/pool';

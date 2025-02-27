@@ -1,6 +1,6 @@
 import { NodeOmniWorker } from ".";
 import { staticImplements } from "../types/helpers";
-import { IOmniWorkerPool, IOmniWorkerPoolOptions, ILaunchable } from "../types/pool";
+import { IOmniWorkerPool, IOmniWorkerPoolOptions, ILaunchable } from "../types/node-omni-worker";
 
 @staticImplements<ILaunchable>()
 export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {

@@ -1,8 +1,7 @@
-import { IBuildable, IExposable, IOmniWorker } from "../types/omni-worker";
-import { IPoolable } from "../types/pool";
-import Comlink from 'comlink';
+import { IBuildable, IExposable, IOmniWorker, IPoolable } from "../types/web-omni-worker";
+import * as Comlink from 'comlink/dist/esm/comlink';
 import { staticImplements } from "../types/helpers";
-import { buildWebApiAndWorkerFromCode, genWorkerCodeFromFile } from "./builder";
+import { buildWebApiAndWorker } from "./builder";
 
 /**
  * OmniWorker for the web
@@ -10,16 +9,16 @@ import { buildWebApiAndWorkerFromCode, genWorkerCodeFromFile } from "./builder";
 @staticImplements<IBuildable>()
 @staticImplements<IExposable>()
 export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
-  private _code: string;
+  private _url: URL;
   private _worker: Worker;
   private _api: Comlink.RemoteObject<T>;
 
   constructor(
-    code: string,
+    url: URL,
     worker: Worker,
     api: Comlink.RemoteObject<T>
   ) {
-    this._code = code;
+    this._url = url;
     this._worker = worker;
     this._api = api;
     return this;
@@ -44,10 +43,9 @@ export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
    * to be the worker
    * @returns An OmniWorker
    */
-  public static async build<T>(path: string): Promise<WebOmniWorker<T>> {
-    const code = await genWorkerCodeFromFile(path);
-    const { worker, api } = buildWebApiAndWorkerFromCode<T>(code);
-    return new WebOmniWorker(code, worker, api);
+  public static async build<T>(url: URL): Promise<WebOmniWorker<T>> {
+    const { worker, api } = buildWebApiAndWorker<T>(url);
+    return new WebOmniWorker(url, worker, api);
   }
 
   isInitialized = () => this._api !== undefined;
@@ -67,10 +65,10 @@ export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
 
   clone = (numOfTimes: number) => {
     const workers: WebOmniWorker<T>[] = [];
+    const url = this._url;
     for (let i = 0; i <= numOfTimes; i++) {
-      const code = this._code;
-      const { worker, api } = buildWebApiAndWorkerFromCode<T>(code);
-      workers.push(new WebOmniWorker<T>(code, worker, api));
+      const { worker, api } = buildWebApiAndWorker<T>(url);
+      workers.push(new WebOmniWorker<T>(url, worker, api));
     }
     return workers;
   };

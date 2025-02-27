@@ -1,9 +1,8 @@
-import { IBuildable, IExposable, IOmniWorker } from '../types/omni-worker';
+import { IBuildable, IExposable, IOmniWorker, IPoolable } from '../types/node-omni-worker';
 import { parentPort, Worker as ThreadWorker } from 'worker_threads';
 import Comlink from 'comlink';
 import nodeEndpoint from 'comlink/dist/umd/node-adapter';
 import { buildNodeApiAndWorkerFromCode, genWorkerCodeFromFile } from './builder';
-import { IPoolable } from '../types/pool';
 import { staticImplements } from '../types/helpers';
 
 /**
@@ -71,8 +70,8 @@ export class NodeOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
 
   public clone = (numOfTimes: number) => {
     const workers: NodeOmniWorker<T>[] = [];
+    const code = this._code;
     for (let i = 0; i <= numOfTimes; i++) {
-      const code = this._code;
       const { worker, api } = buildNodeApiAndWorkerFromCode<T>(code);
       workers.push(new NodeOmniWorker<T>(code, worker, api));
     }
