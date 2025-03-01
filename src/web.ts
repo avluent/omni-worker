@@ -1,7 +1,8 @@
 export {
   IOmniWorker,
   IOmniWorkerPool,
-  IOmniWorkerPoolOptions
+  IOmniWorkerPoolOptions,
+  IWebOmniWorkerBuilderOptions
 } from './types/web-omni-worker';
 
 export {
@@ -9,5 +10,5 @@ export {
 } from './web/index';
 
 export {
-  WebOmniWorkerBuilderOptions
-} from './web/builder/model';
+  WebOmniWorkerPool
+} from './web/pool';

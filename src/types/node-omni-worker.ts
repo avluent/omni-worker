@@ -1,5 +1,4 @@
 import { RemoteObject } from 'comlink/dist/umd/comlink';
-import { WebOmniWorkerBuilderOptions } from '../web';
 
 /**
  * The base Interface for all workers

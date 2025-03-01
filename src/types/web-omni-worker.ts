@@ -1,5 +1,4 @@
 import { RemoteObject } from 'comlink/dist/esm/comlink';
-import { WebOmniWorkerBuilderOptions } from '../web';
 
 /**
  * The base Interface for all workers
@@ -32,7 +31,7 @@ export interface IOmniWorker<T> {
  * a OmniWorker type.
  */
 export interface IBuildable {
-  build: <T>(url: URL, options: WebOmniWorkerBuilderOptions) => Promise<IOmniWorker<T>>
+  build: <T>(url: URL, options: IWebOmniWorkerBuilderOptions) => Promise<IOmniWorker<T>>
 }
 
 /**
@@ -63,8 +62,8 @@ export interface ILaunchable {
    * @param options (Optional) Options object for launching the pool
    */
   buildAndLaunch<T>(
-    from: string,
-    options?: IOmniWorkerPoolOptions
+    url: URL,
+    options?: IWebOmniWorkerBuilderOptions & IOmniWorkerPoolOptions
   ): Promise<IOmniWorkerPool<T>>
 
   /**
@@ -104,3 +103,19 @@ export interface IPoolOptions {
  * The options for instantiating an OmniWorker pool
  */
 export interface IOmniWorkerPoolOptions extends IPoolOptions { }
+
+
+/**
+ * JS Extension types
+ */
+export type JsExtension = '.cjs' | '.mjs' | '.js';
+
+/**
+ * The options provided to the `provideWorker(url, options)` function
+ */
+export interface IWebOmniWorkerBuilderOptions {
+  /**
+   * The bundler's target extension (defaults to .js)
+   */
+  extension?: JsExtension
+}

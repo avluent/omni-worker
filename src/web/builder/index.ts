@@ -1,10 +1,10 @@
 import * as Comlink from 'comlink/dist/esm/comlink';
 import { convertToJsUrl } from './helpers';
-import { WebOmniWorkerBuilderOptions } from './model';
+import { IWebOmniWorkerBuilderOptions } from '../../types/web-omni-worker';
 
 export const buildWebApiAndWorker = <T>(
   tsUrl: URL,
-  options: WebOmniWorkerBuilderOptions
+  options: IWebOmniWorkerBuilderOptions
 ): { jsUrl: URL, worker: Worker, api: Comlink.RemoteObject<T> } => {
 
   const extension = options.extension || '.js';

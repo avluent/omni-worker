@@ -2,7 +2,7 @@ import { IBuildable, IExposable, IOmniWorker, IPoolable } from "../types/web-omn
 import * as Comlink from 'comlink/dist/esm/comlink';
 import { staticImplements } from "../types/helpers";
 import { buildWebApiAndWorker } from "./builder";
-import { WebOmniWorkerBuilderOptions } from "../web";
+import { IWebOmniWorkerBuilderOptions } from "../web";
 
 /**
  * OmniWorker for the web
@@ -11,13 +11,13 @@ import { WebOmniWorkerBuilderOptions } from "../web";
 @staticImplements<IExposable>()
 export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
   private _url: URL;
-  private _options: WebOmniWorkerBuilderOptions;
+  private _options: IWebOmniWorkerBuilderOptions;
   private _worker: Worker;
   private _api: Comlink.RemoteObject<T>;
 
   constructor(
     url: URL,
-    options: WebOmniWorkerBuilderOptions,
+    options: IWebOmniWorkerBuilderOptions,
     worker: Worker,
     api: Comlink.RemoteObject<T>
   ) {
@@ -49,7 +49,7 @@ export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
    */
   public static async build<T>(
     tsUrl: URL,
-    options: WebOmniWorkerBuilderOptions = {
+    options: IWebOmniWorkerBuilderOptions = {
       extension: '.js'
     }
   ): Promise<WebOmniWorker<T>> {

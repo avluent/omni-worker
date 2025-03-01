@@ -1,53 +1,52 @@
-import { NodeOmniWorker } from ".";
+import { WebOmniWorker } from ".";
 import { staticImplements } from "../types/helpers";
-import { IOmniWorkerPool, IOmniWorkerPoolOptions, ILaunchable } from "../types/node-omni-worker";
+import { ILaunchable, IOmniWorkerPool, IOmniWorkerPoolOptions, IWebOmniWorkerBuilderOptions } from "../types/web-omni-worker";
 
 @staticImplements<ILaunchable>()
-export class NodeOmniWorkerPool<T> implements IOmniWorkerPool<T> {
+export class WebOmniWorkerPool<T> implements IOmniWorkerPool<T> {
 
-  private _pool: NodeOmniWorker<T>[] = [];
-  private _from: NodeOmniWorker<T>;
-  private _options: IOmniWorkerPoolOptions;
+  private _pool: WebOmniWorker<T>[] = [];
+  private _from: WebOmniWorker<T>;
+  private _options: IWebOmniWorkerBuilderOptions & IOmniWorkerPoolOptions;
   private _count: number = 0;
   private _lastUseIdx: number = -1;
 
   private constructor(
-    from: NodeOmniWorker<T>,
-    options: IOmniWorkerPoolOptions
+    from: WebOmniWorker<T>,
+    options?: IOmniWorkerPoolOptions
   ) {
     this._from = from;
-    this._options = options;
+    this._options = options || { numOfWorkers: 1 };
     this.applyOptions();
   }
 
   /**
-   * First builds the OmniWorkers and then launches a new NodeOmniWorker pool
-   * @param from The (relative) file path from your project's root to the worker .ts file
+   * First builds the OmniWorkers and then launches a new WebOmniWorker pool
+   * @param url A URL with the relative file path to the worker .ts file
    * @param options (Optional) Options object for launching the pool
    */
   public static async buildAndLaunch<T>(
-    from: string,
-    options: IOmniWorkerPoolOptions = {
-      numOfWorkers: 1
+    url: URL,
+    options: IWebOmniWorkerBuilderOptions & IOmniWorkerPoolOptions = {
+      extension: '.js',
+      numOfWorkers: navigator?.hardwareConcurrency || 1
     }
-  ): Promise<NodeOmniWorkerPool<T>> {
-    const worker = await NodeOmniWorker.build<T>(from);
-    const pool: NodeOmniWorkerPool<T> = NodeOmniWorkerPool.launch<T>(worker, options);
+  ): Promise<WebOmniWorkerPool<T>> {
+    const worker = await WebOmniWorker.build<T>(url, options);
+    const pool: WebOmniWorkerPool<T> = WebOmniWorkerPool.launch<T>(worker, options);
     return pool;
   }
 
   /**
-   * Launches a new NodeOmniWorker pool according to the options provided
-   * @param worker An already built NodeOmniWorker
+   * Launches a new WebOmniWorker pool according to the options provided
+   * @param worker An already built WebOmniWorker
    * @returns A newly created pool
    */
   static launch<T>(
-    worker: NodeOmniWorker<T>,
-    options: IOmniWorkerPoolOptions = {
-      numOfWorkers: 1
-    }
-  ): NodeOmniWorkerPool<T> {
-    const pool = new NodeOmniWorkerPool<T>(worker, options);
+    worker: WebOmniWorker<T>,
+    options?: IWebOmniWorkerBuilderOptions & IOmniWorkerPoolOptions
+  ): WebOmniWorkerPool<T> {
+    const pool = new WebOmniWorkerPool<T>(worker, options);
     return pool;
   }
 
