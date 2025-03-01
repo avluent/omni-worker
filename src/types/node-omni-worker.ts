@@ -1,4 +1,5 @@
 import { RemoteObject } from 'comlink/dist/umd/comlink';
+import { WebOmniWorkerBuilderOptions } from '../web';
 
 /**
  * The base Interface for all workers
@@ -28,7 +29,7 @@ export interface IOmniWorker<T> {
 
 /**
  * Defines whether the class is buildable, meaning that class can be made into
- * a OmniWorker type.
+ * a NodeOmniWorker type.
  */
 export interface IBuildable {
   build: <T>(path: string) => Promise<IOmniWorker<T>>

@@ -1,5 +1,5 @@
 import { describe, expect, test, beforeAll, afterAll } from "vitest";
-import { NodeOmniWorker } from '../src/index';
+import { NodeOmniWorker } from '../src/node';
 import { TestImportWorkerModel, TestNativeWorkerModel, TestWorkerModel } from './mock/worker-model';
 import { MOCK_DIR } from './mock/constants';
 

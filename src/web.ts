@@ -7,3 +7,7 @@ export {
 export {
   WebOmniWorker
 } from './web/index';
+
+export {
+  WebOmniWorkerBuilderOptions
+} from './web/builder/model';

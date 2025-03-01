@@ -2,6 +2,7 @@ import { IBuildable, IExposable, IOmniWorker, IPoolable } from "../types/web-omn
 import * as Comlink from 'comlink/dist/esm/comlink';
 import { staticImplements } from "../types/helpers";
 import { buildWebApiAndWorker } from "./builder";
+import { WebOmniWorkerBuilderOptions } from "../web";
 
 /**
  * OmniWorker for the web
@@ -10,15 +11,18 @@ import { buildWebApiAndWorker } from "./builder";
 @staticImplements<IExposable>()
 export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
   private _url: URL;
+  private _options: WebOmniWorkerBuilderOptions;
   private _worker: Worker;
   private _api: Comlink.RemoteObject<T>;
 
   constructor(
     url: URL,
+    options: WebOmniWorkerBuilderOptions,
     worker: Worker,
     api: Comlink.RemoteObject<T>
   ) {
     this._url = url;
+    this._options = options;
     this._worker = worker;
     this._api = api;
     return this;
@@ -39,13 +43,18 @@ export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
    * This usually means, building from the consumer's code, creating the comlink
    * interface between the worker and the main thread as well as the worker itself.
    * 
-   * @param path Relative path from the INVOCATION POINT OF THIS FUNCTION to the file
-   * to be the worker
-   * @returns An OmniWorker
+   * @param tsUrl A URL object linking to the worker .ts file
+   * @param options Builder options
+   * @returns A WebOmniWorker
    */
-  public static async build<T>(url: URL): Promise<WebOmniWorker<T>> {
-    const { worker, api } = buildWebApiAndWorker<T>(url);
-    return new WebOmniWorker(url, worker, api);
+  public static async build<T>(
+    tsUrl: URL,
+    options: WebOmniWorkerBuilderOptions = {
+      extension: '.js'
+    }
+  ): Promise<WebOmniWorker<T>> {
+    const { jsUrl, worker, api } = buildWebApiAndWorker<T>(tsUrl, options);
+    return new WebOmniWorker(jsUrl, options, worker, api);
   }
 
   isInitialized = () => this._api !== undefined;
@@ -66,9 +75,10 @@ export class WebOmniWorker<T> implements IOmniWorker<T>, IPoolable<T> {
   clone = (numOfTimes: number) => {
     const workers: WebOmniWorker<T>[] = [];
     const url = this._url;
+    const options = this._options;
     for (let i = 0; i <= numOfTimes; i++) {
-      const { worker, api } = buildWebApiAndWorker<T>(url);
-      workers.push(new WebOmniWorker<T>(url, worker, api));
+      const { worker, api } = buildWebApiAndWorker<T>(url, options);
+      workers.push(new WebOmniWorker<T>(url, options, worker, api));
     }
     return workers;
   };

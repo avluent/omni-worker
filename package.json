@@ -7,17 +7,17 @@
   "exports": {
     ".": {
       "node": {
+        "types": "./dist/types/node.d.ts",
         "require": "./dist/cjs/node.js",
-        "import": "./dist/mjs/node.js",
-        "types": "./dist/types/node.d.ts"
+        "import": "./dist/mjs/node.js"
       },
       "browser": {
-        "import": "./dist/mjs/web.js",
-        "types": "./dist/types/web.d.ts"
+        "types": "./dist/types/web.d.ts",
+        "import": "./dist/mjs/web.js"
       },
       "default": {
-        "import": "./dist/mjs/web.js",
-        "types": "./dist/types/web.d.ts"
+        "types": "./dist/types/web.d.ts",
+        "import": "./dist/mjs/web.js"
       }
     },
     "./package.json": "./package.json"
@@ -51,6 +51,7 @@
     "@types/lodash": "^4.17.15",
     "@types/memory-fs": "^0.3.7",
     "@types/webpack-node-externals": "^3.0.4",
+    "jsdom": "^26.0.0",
     "lodash": "^4.17.21",
     "swisseph": "^0.5.17",
     "ts-node": "^10.9.2",

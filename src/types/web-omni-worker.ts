@@ -1,4 +1,5 @@
 import { RemoteObject } from 'comlink/dist/esm/comlink';
+import { WebOmniWorkerBuilderOptions } from '../web';
 
 /**
  * The base Interface for all workers
@@ -31,7 +32,7 @@ export interface IOmniWorker<T> {
  * a OmniWorker type.
  */
 export interface IBuildable {
-  build: <T>(url: URL) => Promise<IOmniWorker<T>>
+  build: <T>(url: URL, options: WebOmniWorkerBuilderOptions) => Promise<IOmniWorker<T>>
 }
 
 /**
