@@ -10,14 +10,14 @@ const BUILD_FILENAME = 'bundle.js';
 const BUILD_FILE_PATH = path.join(BUILD_PATH, BUILD_FILENAME);
 
 export function buildWorkerCode(entryFile: string) {
+
+  if (!fs.existsSync(BUILD_PATH)) {
+    fs.mkdirSync(BUILD_PATH, { recursive: true });
+  }
+  const config = getWebpackConfig(entryFile);
+  const compiler = webpack(config);
+
   return new Promise<string>((resolve, reject) => {
-
-    if (!fs.existsSync(BUILD_PATH)) {
-      fs.mkdirSync(BUILD_PATH, { recursive: true });
-    }
-
-    const config = getWebpackConfig(entryFile);
-    const compiler = webpack(config);
 
     compiler.run((err, stats) => {
       if (err) {
@@ -25,22 +25,24 @@ export function buildWorkerCode(entryFile: string) {
         return;
       }
 
+      /*
       console.log(stats?.toString({
         chunks: false,
         colors: true
       }));
+      */
 
       const bundledCode = fs
         .readFileSync(BUILD_FILE_PATH, 'utf8');
 
-      resolve(bundledCode);
-
       // clean up the build folder
-      fs.rm(BUILD_PATH, { recursive: true, force: true }, (err) => {
+      fs.rm(BUILD_PATH, { recursive: true, force: false }, (err) => {
         if (err) {
           reject(err);
         }
       });
+
+      resolve(bundledCode);
     });
   });
 }
@@ -124,7 +126,6 @@ const getWebpackConfig = (entry: string): Configuration => ({
               plugins: [
                 resolveNodeModules('@babel/plugin-transform-modules-commonjs'),
                 [resolveNodeModules('@babel/plugin-proposal-decorators'), { "legacy": true }],
-                // [resolveNodeModules('@babel/plugin-proposal-class-properties'), { "loose": true }]
               ]
             },
           }
