@@ -10,10 +10,12 @@ describe('WebOmniWorker', () => {
   describe('Helper functions', () => {
 
     test('A tsURL is converted to a jsURL', () => {
-      const tsUrl = new window.URL('http://localhost:5000/workers/test.worker.ts');
+      let tsUrl = new window.URL('http://localhost:5000/workers/test.worker.ts');
 
       const jsURL = convertToJsUrl(tsUrl, '.js');
       expect(jsURL.pathname.endsWith('.js')).toBeTruthy();
+
+      tsUrl = new window.URL('http://localhost:5000/workers/test.worker.ts');
 
       const anotherJsUrl = convertToJsUrl(tsUrl, '.mjs');
       expect (anotherJsUrl.pathname.endsWith('.mjs')).toBeTruthy();

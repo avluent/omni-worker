@@ -25,12 +25,10 @@ export function buildWorkerCode(entryFile: string) {
         return;
       }
 
-      /*
       console.log(stats?.toString({
         chunks: false,
         colors: true
       }));
-      */
 
       const bundledCode = fs
         .readFileSync(BUILD_FILE_PATH, 'utf8');
@@ -124,7 +122,9 @@ const getWebpackConfig = (entry: string): Configuration => ({
                 resolveNodeModules('@babel/preset-typescript')
               ],
               plugins: [
-                resolveNodeModules('@babel/plugin-transform-modules-commonjs')
+                resolveNodeModules('@babel/plugin-transform-modules-commonjs'),
+                [resolveNodeModules('@babel/plugin-proposal-decorators'), { "legacy": true }],
+                // [resolveNodeModules('@babel/plugin-proposal-class-properties'), { "loose": true }]
               ]
             },
           }

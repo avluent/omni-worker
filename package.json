@@ -1,6 +1,6 @@
 {
   "name": "@anonaddy/omni-worker",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Run your code including all imports inside workers on either the web or on NodeJS!",
   "main": "dist/cjs/node.js",
   "types": "dist/types/node.d.ts",
@@ -66,6 +66,7 @@
     "comlink": "^4.4.2",
     "terser-webpack-plugin": "^5.3.11",
     "webpack": "^5.97.1",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^3.0.0",
+    "@babel/plugin-proposal-decorators": "^7.25.9"
   }
 }
