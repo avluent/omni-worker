@@ -60,9 +60,9 @@ export function createNodeWorker<T>(
   worker._setWorkerAndCode(
     new ThreadWorker(bundledCode, {
       eval: true,
-      stdin: 'ignore',
-      stdout: 'ignore',
-      stderr: 'inherit',
+      stdin: 'ignore' as unknown as boolean,
+      stdout: 'ignore' as unknown as boolean,
+      stderr: 'inherit' as unknown as boolean,
     }),
     bundledCode
   );

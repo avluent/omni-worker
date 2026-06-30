@@ -3,32 +3,35 @@
   "version": "2.0.0",
   "description": "Run your code including all imports inside workers on either the web or on NodeJS!",
   "type": "module",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "require": "./dist/cjs/index.cjs"
     },
     "./vite": {
       "types": "./dist/types/vite.d.ts",
       "import": "./dist/esm/vite/index.js",
-      "require": "./dist/cjs/vite/index.js"
+      "require": "./dist/cjs/vite/index.cjs"
     },
     "./package.json": "./package.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "package.json"
   ],
   "scripts": {
     "build": "tsup",
     "prepack": "npm run build",
+    "prepublishOnly": "npm run build && npm run typecheck",
     "pack": "npm pack --silent",
     "test": "vitest",
     "test:node": "vitest --config vitest.node.config.ts",
     "test:web": "vitest --config vitest.web.config.ts",
+    "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "repository": {
@@ -50,9 +53,10 @@
     "esbuild": "^0.24.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "@types/node": "^22.20.0",
+    "jsdom": "^26.0.0",
     "tsup": "^8.0.0",
-    "vitest": "^3.0.0",
-    "jsdom": "^26.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
   }
 }

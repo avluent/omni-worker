@@ -17,8 +17,21 @@ import type { Plugin } from 'vite';
 import * as esbuild from 'esbuild';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve, isAbsolute } from 'node:path';
-import type { VitePluginOptions } from '../types';
 import { OmniWorkerError, OmniWorkerErrorCodes } from '../runtime/error';
+
+/**
+ * Options for the `omniWorkerVite()` plugin.
+ *
+ * @see {@link omniWorkerVite}
+ */
+export interface VitePluginOptions {
+  /** Glob patterns of files to include as workers. */
+  include?: string[];
+  /** Glob patterns of files to exclude from worker processing. */
+  exclude?: string[];
+  /** The esbuild target for bundling worker code. */
+  target?: string;
+}
 
 /** Pattern matching `.worker.ts` file extensions */
 const WORKER_FILE_PATTERN = /\.worker\.ts$/;
@@ -184,7 +197,7 @@ Comlink.expose(api);
           platform: 'neutral', // Keep code compatible with both browser and Node
           target,
           minify: false, // Let Vite handle minification
-          sourcemap: this.config?.command === 'serve' ? 'inline' : false,
+          sourcemap: (this as { config?: { command?: string } }).config?.command === 'serve' ? 'inline' : false,
           treeShaking: true,
           external: ['comlink'], // Provided by runtime adapters at execution time
         });
@@ -223,6 +236,3 @@ export default url;
     },
   };
 }
-
-/** Re-export VitePluginOptions type for consumer convenience */
-export type { VitePluginOptions } from '../types';

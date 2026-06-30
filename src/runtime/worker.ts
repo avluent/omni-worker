@@ -25,8 +25,8 @@ import { OmniWorkerError, OmniWorkerErrorCodes } from './error';
  * // Node.js adapter extends WorkerRuntime
  * class NodeWorkerRuntime<T> extends WorkerRuntime<T> {
  *   protected _worker: import('worker_threads').Worker;
- *   protected async initialize(): Promise<void> { /* ... */ }
- *   protected async terminateWorker(): Promise<void> { /* ... */ }
+ *   protected async initialize(): Promise<void> { ... }
+ *   protected async terminateWorker(): Promise<void> { ... }
  * }
  * ```
  */
