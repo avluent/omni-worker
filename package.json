@@ -1,38 +1,36 @@
 {
   "name": "@anonaddy/omni-worker",
-  "version": "0.2.0",
+  "version": "2.0.0",
   "description": "Run your code including all imports inside workers on either the web or on NodeJS!",
-  "main": "dist/cjs/node.js",
-  "types": "dist/types/node.d.ts",
+  "type": "module",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "node": {
-        "types": "./dist/types/node.d.ts",
-        "require": "./dist/cjs/node.js",
-        "import": "./dist/mjs/node.js"
-      },
-      "browser": {
-        "types": "./dist/types/web.d.ts",
-        "import": "./dist/mjs/web.js"
-      },
-      "default": {
-        "types": "./dist/types/web.d.ts",
-        "import": "./dist/mjs/web.js"
-      }
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./vite": {
+      "types": "./dist/types/vite.d.ts",
+      "import": "./dist/esm/vite/index.js",
+      "require": "./dist/cjs/vite/index.js"
     },
     "./package.json": "./package.json"
-  },
-  "scripts": {
-    "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.mjs.json",
-    "prepack": "npm run build",
-    "pack": "npm pack --silent",
-    "test:dom": "vitest --config vite.config.dom.ts",
-    "test:node": "vitest --config vite.config.node.ts",
-    "prepare": "npm run build"
   },
   "files": [
     "dist"
   ],
+  "scripts": {
+    "build": "tsup",
+    "prepack": "npm run build",
+    "pack": "npm pack --silent",
+    "test": "vitest",
+    "test:node": "vitest --config vitest.node.config.ts",
+    "test:web": "vitest --config vitest.web.config.ts",
+    "clean": "rm -rf dist"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/avluent/omni-worker"
@@ -47,26 +45,14 @@
   ],
   "author": "anonaddy",
   "license": "MIT",
-  "devDependencies": {
-    "@types/lodash": "^4.17.15",
-    "@types/memory-fs": "^0.3.7",
-    "@types/webpack-node-externals": "^3.0.4",
-    "jsdom": "^26.0.0",
-    "lodash": "^4.17.21",
-    "swisseph": "^0.5.17",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.0.0",
-    "vitest": "^3.0.5"
+  "dependencies": {
+    "comlink": "^4.4.2",
+    "esbuild": "^0.24.0"
   },
-  "peerDependencies": {
-    "@babel/plugin-transform-modules-commonjs": "^7.26.3",
-    "@babel/plugin-proposal-decorators": "^7.25.9",
-    "@babel/preset-env": "^7.26.8",
-    "@babel/preset-typescript": "^7.26.0",
-    "babel-loader": "^9.2.1",
-    "terser-webpack-plugin": "^5.3.11",
-    "webpack": "^5.97.1",
-    "webpack-node-externals": "^3.0.0",
-    "comlink": "^4.4.2"
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "tsup": "^8.0.0",
+    "vitest": "^3.0.0",
+    "jsdom": "^26.0.0"
   }
 }
