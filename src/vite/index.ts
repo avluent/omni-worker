@@ -17,7 +17,6 @@ import type { Plugin } from 'vite';
 import * as esbuild from 'esbuild';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve, isAbsolute } from 'node:path';
-import { createRequire } from 'node:module';
 import { OmniWorkerError, OmniWorkerErrorCodes } from '../runtime/error';
 
 /**
@@ -184,22 +183,10 @@ Comlink.expose(api);
       // Bundle with esbuild
       let bundled: string;
       try {
-        // Resolve comlink's ESM entry point from the library's node_modules.
-        // comlink is a dependency of @anonaddy/omni-worker and may not be
-        // hoisted to the consumer's root node_modules.
-        const libPkgPath = createRequire(resolve(process.cwd(), 'x.js')).resolve(
-          '@anonaddy/omni-worker/package.json'
-        );
-        const libDir = dirname(libPkgPath);
-        const comlinkPath = resolve(
-          libDir,
-          'node_modules/comlink/dist/esm/comlink.mjs'
-        );
-
         const result = await esbuild.build({
           stdin: {
             contents: fullSource,
-            resolveDir: dirname(workerPath),
+            resolveDir: process.cwd(), // Consumer project root — resolves comlink from hoisted node_modules
             sourcefile: workerPath,
             loader: 'ts', // .worker.ts is non-standard; explicitly use TypeScript loader
           },
@@ -212,9 +199,6 @@ Comlink.expose(api);
           sourcemap: (this as { config?: { command?: string } }).config?.command === 'serve' ? 'inline' : false,
           treeShaking: true,
           mainFields: ['browser', 'module', 'main'], // Required for platform: 'neutral' to resolve comlink
-          alias: {
-            comlink: comlinkPath,
-          },
         });
 
         const outputFile = result.outputFiles?.[0];
