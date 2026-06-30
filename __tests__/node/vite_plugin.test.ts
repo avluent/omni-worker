@@ -667,7 +667,7 @@ describe('omniWorkerVite — esbuild bundling verification', () => {
     expect(rawCode).not.toContain("from \"./math-lib\"");
   });
 
-  it('keeps comlink as external import (runtime-provided)', async () => {
+  it('bundles comlink inline (no bare specifier left in output)', async () => {
     fixtureDir = setupFixtureDir('comlink-test');
     createFixtureFile(fixtureDir, 'my.worker.ts', WORKER_MINIMAL);
 
@@ -685,9 +685,9 @@ describe('omniWorkerVite — esbuild bundling verification', () => {
     const codeMatch = result?.match(/export const code = "((?:[^"\\]|\\.)*)"/s);
     const rawCode = codeMatch ? JSON.parse('"' + codeMatch[1] + '"') : '';
 
-    // Comlink is external (runtime-provided), so the import statement remains
-    // and Comlink.expose(api) is called
-    expect(rawCode).toContain('comlink');
+    // Comlink is bundled inline — no bare 'comlink' import should remain
+    expect(rawCode).not.toContain("from 'comlink'");
+    expect(rawCode).not.toContain('from "comlink"');
     expect(rawCode).toContain('expose');
     expect(rawCode).toContain('api');
   });

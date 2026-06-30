@@ -17,6 +17,7 @@ import type { Plugin } from 'vite';
 import * as esbuild from 'esbuild';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve, isAbsolute } from 'node:path';
+import { createRequire } from 'node:module';
 import { OmniWorkerError, OmniWorkerErrorCodes } from '../runtime/error';
 
 /**
@@ -173,8 +174,7 @@ export function omniWorkerVite(options: VitePluginOptions = {}): Plugin {
       }
 
       // Append Comlink expose boilerplate before bundling.
-      // Comlink is marked as external because it's provided by the runtime
-      // adapters (createNodeWorker / createWebWorker), not bundled here.
+      // Comlink is bundled inline — data URL workers cannot resolve bare specifiers.
       const fullSource = `${source}
 
 import * as Comlink from 'comlink';
@@ -184,6 +184,18 @@ Comlink.expose(api);
       // Bundle with esbuild
       let bundled: string;
       try {
+        // Resolve comlink's ESM entry point from the library's node_modules.
+        // comlink is a dependency of @anonaddy/omni-worker and may not be
+        // hoisted to the consumer's root node_modules.
+        const libPkgPath = createRequire(resolve(process.cwd(), 'x.js')).resolve(
+          '@anonaddy/omni-worker/package.json'
+        );
+        const libDir = dirname(libPkgPath);
+        const comlinkPath = resolve(
+          libDir,
+          'node_modules/comlink/dist/esm/comlink.mjs'
+        );
+
         const result = await esbuild.build({
           stdin: {
             contents: fullSource,
@@ -199,7 +211,10 @@ Comlink.expose(api);
           minify: false, // Let Vite handle minification
           sourcemap: (this as { config?: { command?: string } }).config?.command === 'serve' ? 'inline' : false,
           treeShaking: true,
-          external: ['comlink'], // Provided by runtime adapters at execution time
+          mainFields: ['browser', 'module', 'main'], // Required for platform: 'neutral' to resolve comlink
+          alias: {
+            comlink: comlinkPath,
+          },
         });
 
         const outputFile = result.outputFiles?.[0];
