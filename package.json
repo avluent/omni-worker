@@ -49,6 +49,7 @@
   ],
   "author": "anonaddy",
   "license": "MIT",
+  "workspaces": ["demos"],
   "dependencies": {
     "comlink": "^4.4.2",
     "esbuild": "^0.24.0"

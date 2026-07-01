@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OmniWorker Demos</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <h1>👷 OmniWorker Demos</h1>
+  <p>Demonstrating parallel worker execution with timing measurement</p>
+
+  <div id="tabs" role="tablist" aria-label="Demo framework tabs">
+    <button
+      type="button"
+      role="tab"
+      data-tab="vanilla"
+      class="active"
+      aria-selected="true"
+      aria-controls="vanilla-panel"
+      id="vanilla-tab"
+    >Vanilla JS</button>
+    <button
+      type="button"
+      role="tab"
+      data-tab="react"
+      aria-selected="false"
+      aria-controls="react-panel"
+      id="react-tab"
+    >React</button>
+    <button
+      type="button"
+      role="tab"
+      data-tab="svelte"
+      aria-selected="false"
+      aria-controls="svelte-panel"
+      id="svelte-tab"
+    >Svelte</button>
+  </div>
+
+  <div id="vanilla-panel" class="panel active" role="tabpanel" aria-labelledby="vanilla-tab"></div>
+  <div id="react-panel" class="panel" role="tabpanel" aria-labelledby="react-tab"></div>
+  <div id="svelte-panel" class="panel" role="tabpanel" aria-labelledby="svelte-tab"></div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
