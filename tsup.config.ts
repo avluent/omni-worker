@@ -7,6 +7,7 @@ export default defineConfig([
   {
     entry: {
       index: 'src/index.ts',
+      'index.web': 'src/index.web.ts',
       'runtime/worker': 'src/runtime/worker.ts',
       'runtime/pool': 'src/runtime/pool.ts',
       'runtime/node': 'src/runtime/node.ts',
@@ -57,6 +58,7 @@ export default defineConfig([
   {
     entry: {
       index: 'src/index.ts',
+      'index.web': 'src/index.web.ts',
       worker: 'src/runtime/worker.ts',
       pool: 'src/runtime/pool.ts',
       node: 'src/runtime/node.ts',

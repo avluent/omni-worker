@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { omniWorkerVite } from '@anonaddy/omni-worker/vite';
+import { omniWorkerVite } from '../dist/esm/vite/index.js';
 
 export default defineConfig({
   plugins: [
@@ -19,6 +19,6 @@ export default defineConfig({
     include: ['comlink'],
   },
   build: {
-    target: 'es2020',
+    target: 'esnext',
   },
 });

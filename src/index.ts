@@ -15,6 +15,10 @@
  *   await pool.destroy(); */
 
 import type { IOmniWorker, IOmniWorkerPool, PoolOptions } from './types';
+
+// Lazy imports — only one of these is ever used at runtime.
+// We import them as functions to avoid pulling in `worker_threads` at the top
+// level, which would break browser builds (Vite externalizes node built-ins).
 import { createNodeWorker } from './runtime/node';
 import { createWebWorker } from './runtime/web';
 import { createWorkerPool } from './runtime/pool';
